@@ -1,0 +1,8 @@
+.DS_Store
+Gemfile.lock
+
+doc/
+tmp/
+
+.bundle/
+.rspec_status
