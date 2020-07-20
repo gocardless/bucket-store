@@ -1,57 +1,70 @@
 # file-storage
 
-TODO: Describe your service here, indicating its purpose and the features it provides.
+An abstraction layer on the top of file cloud storage systems such as Google Cloud
+Storage or S3. This module exposes a generic interface that allows interoperability
+between different storage options. Callers don't need to worry about the specifics
+of where and how a file is stored and retrieved as long as the given key is valid.
 
-Example: [appetiser](https://github.com/gocardless/appetiser#appetiser)
+Keys within the `FileStorage` are URI strings that can universally locate an object
+in the given provider. A valid key example would be 
+`gs://gc-prd-nx-incoming/file/path.json`.
 
 ## Usage
+In order to make use of this, you'll first need to add this gem to your `Gemfile`:
 
-TODO: Describe how you use your service here.
-Example: [appetiser](https://github.com/gocardless/appetiser#usage)
+```ruby
+gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
+```
 
-## Contributing
+## Adapters
 
-### Structure
+`FileStorage` comes with 3 adapters:
 
-TODO: What's the structure of your code? For example, do you have separate server and client codebases?
-Example: [appetiser](https://github.com/gocardless/appetiser#how-is-appetiser-built)
+- `gs`: the Google Cloud Storage adapter
+- `disk`: a disk-based adapter
+- `inmemory`: an in-memory store
 
-### Infrastructure
+### GS adapter
+This is the Google Cloud Storage adapter and what you'll most likely wan to use in
+production. `FileStorage` assumes that the authorisation for accessing the resources
+has been set up outside of the gem.
 
-TODO: What infrastructure does your application depend on and what's the availability of these dependencies.
-Example: [payment-service](https://github.com/gocardless/payments-service#infrastructure-dependencies)
 
-### Monitoring and Alerting
+### Disk adapter
+A disk-backed key-value store. This adapter will create a temporary directory where
+all the files will be written into/read from. The base directory can be explicitly
+defined by setting the `DISK_ADAPTER_BASE_DIR` environment variable. 
 
-TODO: What monitoring and alerting does your application have?
-Example: [appetiser](https://github.com/gocardless/appetiser#monitoring-and-alerting)
 
-### Dependencies
+### In-memory adapter
+An in-memory key-value storage. This works just like the disk adapter, except that
+the content of all the files is stored in memory. This is particularly useful for
+testing. Note that content added to this adapter will persist for the lifetime of
+the application - this means that if used in tests, content added to a random test
+will be visible to all other tests unless explicitly removed. Generally this is not
+what you want, so it's recommended to explicitly reset the content before every
+test. In RSpec this would translate to adding this line in the `spec_helper`:
 
-TODO: What dependencies do you require to build this service locally (eg. Docker, Ruby)?
-Example: [appetiser](https://github.com/gocardless/appetiser#dependencies)
+```ruby
+config.before { FileStorage::InMemory.reset! }
+```
 
-### Getting started
+## Examples
 
-TODO: Provide a step-by-step guide to running the service locally from a clean git clone.
-Example: [appetiser](https://github.com/gocardless/appetiser#getting-started)
+### Uploading a file to GCS
+```ruby
+FileStorage.for("inmemory://bucket/path/file.xml").upload!("hello world")
+=> "inmemory://bucket/path/file.xml"
+```
 
-### Testing
+### Accessing a file on GCS
+```ruby
+FileStorage.for("inmemory://bucket/path/file.xml").download
+=> {:bucket=>"bucket", :key=>"path/file.xml", :content=>"hello world"}
+```
 
-TODO: How do you run your service's automated tests?
-Example: [appetiser](https://github.com/gocardless/appetiser#testing)
-
-### Deployment
-
-TODO: How is your service deployed?
-Example: [appetiser](https://github.com/gocardless/appetiser#deployment)
-
-### Configuration and Environment Variables
-
-TODO: Does your service have any environment variables? If so, what behaviour is governed by their values?
-Example: [appetiser](https://github.com/gocardless/appetiser#configuration)
-
-## Learning resources
-
-TODO: Any useful learning resources a developer may want to read regarding your service?
-Example: [appetiser](https://github.com/gocardless/appetiser#learning-resources)
+### Listing all keys under a prefix
+```ruby
+FileStorage.for("inmemory://bucket/path/").list
+=> ["inmemory://bucket/path/file.xml"]
+```
