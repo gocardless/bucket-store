@@ -3,3 +3,29 @@
 inherit_gem:
   gc_ruboconfig: rubocop.yml
 
+AllCops:
+  TargetRubyVersion: 2.7.1
+  DisplayCopNames: true
+
+Layout/LineLength:
+  Max: 100
+  Exclude:
+    - "Gemfile"
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/MethodLength:
+  Max: 30
+
+RSpec/NestedGroups:
+  Max: 8
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 10
