@@ -4,8 +4,9 @@ require "fileutils"
 
 module FileStorage
   class Disk
-    def self.build
-      Disk.new(Prius.get(:disk_adapter_base_dir))
+    def self.build(base_dir = ENV["DISK_ADAPTER_BASE_DIR"])
+      base_dir ||= Dir.tmpdir
+      Disk.new(base_dir)
     end
 
     def initialize(base_dir)
