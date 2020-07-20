@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-$LOAD_PATH.push File.expand_path("lib", __dir__)
+require File.expand_path("lib/file_storage/version", __dir__)
 
 Gem::Specification.new do |s|
   s.name        = "file_storage"
-  s.version     = "0.1.0"
+  s.version     = FileStorage::VERSION.dup
   s.authors     = ["GoCardless Engineering"]
   s.email       = ["developers@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
     A helper library to access cloud storage services such as Google Cloud Storage.
   DESCRIPTION
 
-  s.files = Dir["{config,lib}/**/*", "Rakefile", "README.md"]
+  s.files = Dir["lib/**/*", "README.md"]
 
   s.add_dependency "activesupport", "~> 6.0.3"
   s.add_dependency "google-cloud-storage", "~> 1.26"

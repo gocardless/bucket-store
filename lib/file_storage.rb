@@ -6,12 +6,12 @@ require "active_support/core_ext/string/access"
 require "uri"
 require "values"
 
+require "file_storage/version"
 require "file_storage/timing"
 require "file_storage/logger"
-
-require_relative "file_storage/in_memory"
-require_relative "file_storage/gcs"
-require_relative "file_storage/disk"
+require "file_storage/in_memory"
+require "file_storage/gcs"
+require "file_storage/disk"
 
 # An abstraction layer on the top of file cloud storage systems such as Google Cloud
 # Storage or S3. This module exposes a generic interface that allows interoperability
