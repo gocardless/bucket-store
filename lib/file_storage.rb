@@ -65,15 +65,6 @@ module FileStorage
                    key: ctx.key)
   end
 
-  # Sanitizes the input as not all characters are valid as either URIs or as bucket keys.
-  # When we get them we want to replace them with something FileStorage can process.
-  #
-  # @param input [String]
-  # @return [String]
-  def self.sanitize(input)
-    input.gsub(/[{}<>]/, "__")
-  end
-
   class KeyStorage
     include FileStorage::Logger
 
