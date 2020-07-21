@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-group :development, :test do
-  gem "gc_ruboconfig", "~> 2.9"
-  gem "rubocop", require: false
-end
+gemspec
+
+# As it's a private gem, this can only exist in a Gemfile rather than a gemspec...
+gem 'loggy', git: 'git@github.com:gocardless/loggy.git', tag: 'v0.15.1'

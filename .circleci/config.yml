@@ -1,28 +1,57 @@
----
-# This is a scaffold CircleCI config to help you get started with yours, and
-# check if CircleCI has been properly integrated with your new repository.
-#
-# Refer to CircleCI's configuration reference to build on:
-# https://circleci.com/docs/2.0/configuration-reference/
+version: 2.1
 
-version: 2
+references:
+  bundle_install: &bundle_install
+    run:
+      name: Bundle
+      command: |
+        gem install bundler --no-document && \
+        bundle config set no-cache 'true' && \
+        bundle config set jobs '4' && \
+        bundle config set retry '3' && \
+        bundle install
+
+  cache_bundle: &cache_bundle
+    save_cache:
+      key: bundle-{{ checksum ".ruby-version" }}-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
+      paths:
+        - vendor/bundle
+
+  restore_bundle: &restore_bundle
+    restore_cache:
+      key: bundle-{{ checksum ".ruby-version" }}-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
+
 
 jobs:
-  make me a burger:
+  code_quality:
     docker:
-      - image: circleci/ruby:latest
+      - image: circleci/ruby:2.7
     steps:
       - add_ssh_keys
       - checkout
+      - *restore_bundle
+      - *bundle_install
+      - *cache_bundle
       - run:
-          command: |
-            set +x
-            git clone git@github.com:gocardless/healthcheck.git || \
-            echo "Something went wrong, please let Developer Enablement know"
-            echo "Everything seems to be hooked-up properly. Here's a burger!"
+          name: Rubocop
+          command: bundle exec rubocop
+
+  rspec:
+    docker:
+      - image: circleci/ruby:2.7
+    steps:
+      - add_ssh_keys
+      - checkout
+      - *restore_bundle
+      - *bundle_install
+      - *cache_bundle
+      - run:
+          name: Run specs
+          command: bundle exec rspec
 
 workflows:
   version: 2
-  make me a burger:
+  tests:
     jobs:
-    - make me a burger
+      - code_quality
+      - rspec
