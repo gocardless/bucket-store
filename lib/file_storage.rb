@@ -36,9 +36,14 @@ module FileStorage
     def self.parse(raw_key)
       uri = URI(raw_key)
 
+      # A key should never be `nil` but can be empty. Depending on the operation, this may
+      # or may not be a valid configuration (e.g. an empty key is likely valid on a
+      # `list`, but not during a `download`).
+      key = uri.path.sub!(%r{/}, "") || ""
+
       KeyCtx.with(adapter: uri.scheme,
                   bucket: uri.host,
-                  key: uri.path.sub!(%r{/}, ""))
+                  key: key)
     end
   end
 
@@ -58,15 +63,6 @@ module FileStorage
     KeyStorage.new(adapter: ctx.adapter,
                    bucket: ctx.bucket,
                    key: ctx.key)
-  end
-
-  # Sanitizes the input as not all characters are valid as either URIs or as bucket keys.
-  # When we get them we want to replace them with something FileStorage can process.
-  #
-  # @param input [String]
-  # @return [String]
-  def self.sanitize(input)
-    input.gsub(/[{}<>]/, "__")
   end
 
   class KeyStorage
@@ -94,6 +90,8 @@ module FileStorage
     #   download (e.g. `:key` and `:content` will include respectively the original key's name and
     #   the actual download's content)
     def download
+      raise ArgumentError, "Key cannot be empty" if key.empty?
+
       info("Downloading #{key}...",
            event: "key_storage.download_started")
 
@@ -114,6 +112,8 @@ module FileStorage
     # @param [String] content The content to upload
     # @return [String] The final `key` where the content has been uploaded
     def upload!(content)
+      raise ArgumentError, "Key cannot be empty" if key.empty?
+
       info("Uploading #{key}...",
            event: "key_storage.upload_started")
 
