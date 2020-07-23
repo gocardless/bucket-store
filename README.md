@@ -16,6 +16,34 @@ In order to make use of this, you'll first need to add this gem to your `Gemfile
 gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
 ```
 
+## Design and Architecture
+The main principle behind `FileStorage` is that each resource or group of resources must
+be unequivocally identifiable by a URI. The URI is always composed of three parts:
+
+- the "adapter" used to fetch the resource (see "adapters" below)
+- the "bucket" where the resource lives
+- the path to the resource(s)
+
+As an example, all the following are valid URIs:
+
+- `gs://gc-prd-nx-us-ach-submissions/live-production/credits/2020-01-01.xml`
+- `inmemory://bucket/separator/file.xml`
+- `disk://hello/path/to/file.json`
+
+Even though `FileStorage`'s main goal is to be an abstraction layer on top of systems such
+as S3 or Google Cloud Storage where the "path" to a resource is in practice a unique
+identifier as a whole (i.e. the `/` is not a directory separator but rather part of the
+key's name), we assume that clients will actually want some sort of hierarchical
+separation of resources and assume that such separation is achieved by defining each
+part of the hierarchy via `/`.
+
+This means that the following are also valid URIs in `FileStorage` but they refer to
+all the resources under that specific hierarchy:
+
+- `gs://gc-prd-nx-us-ach-submissions/live-production/credits/`
+- `inmemory://bucket/separator/`
+- `disk://hello/path`
+
 ## Adapters
 
 `FileStorage` comes with 3 built-in adapters:
