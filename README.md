@@ -16,6 +16,13 @@ In order to make use of this, you'll first need to add this gem to your `Gemfile
 gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
 ```
 
+If using RSpec, you'll probably want to add this line to RSpec's config block (see
+the *Adapters* section for more details):
+
+```ruby
+config.before { FileStorage::InMemory.reset! }
+```
+
 ## Design and Architecture
 The main principle behind `FileStorage` is that each resource or group of resources must
 be unequivocally identifiable by a URI. The URI is always composed of three parts:
