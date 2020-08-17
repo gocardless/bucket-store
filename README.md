@@ -16,6 +16,13 @@ In order to make use of this, you'll first need to add this gem to your `Gemfile
 gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
 ```
 
+If using RSpec, you'll probably want to add this line to RSpec's config block (see
+the *Adapters* section for more details):
+
+```ruby
+config.before { FileStorage::InMemory.reset! }
+```
+
 ## Design and Architecture
 The main principle behind `FileStorage` is that each resource or group of resources must
 be unequivocally identifiable by a URI. The URI is always composed of three parts:
@@ -78,6 +85,33 @@ in the `spec_helper`:
 ```ruby
 config.before { FileStorage::InMemory.reset! }
 ```
+
+## FileStorage vs ActiveStorage
+
+ActiveStorage is a common framework to access cloud storage systems that is included in
+the ActiveSupport library. In general, ActiveStorage provides a lot more than FileStorage
+does (including many more adapters) however the two libraries have different use cases
+in mind:
+
+- ActiveStorage requires you to define every possible bucket you're planning to use
+  ahead of time in a YAML file. This works well for most cases, however if you plan to
+  use a lot of buckets this soon becomes impractical. We think that FileStorage approach
+  works much better in this case.
+- FileStorage does not provide ways to manipulate the content whereas ActiveStorage does.
+  If you plan to apply transformations to the content before uploading or after
+  downloading them, then probably ActiveStorage is the library for you. With that said,
+  it's still possible to do these transformations outside of FileStorage and in fact we've
+  found the explicitness of this approach a desirable property.
+- FileStorage approach makes any resource on a cloud storage system uniquely identifiable
+  via a single URI, which means normally it's enough to pass that string around different
+  systems to be able to access the resource without ambiguity. As the URI also includes
+  the adapter, it's possible for example to download a `disk://dir/input_file` and
+  upload it to a `gs://bucket/output_file` all going through a single interface.
+  ActiveStorage is instead focused on persisting an equivalent reference on a Rails model.
+  If your application does not use Rails, or does not need to persist the reference or
+  just requires more flexibility in general, then FileStorage is probably the library for
+  you.
+
 
 ## Examples
 
