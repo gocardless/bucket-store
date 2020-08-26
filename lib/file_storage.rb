@@ -5,10 +5,10 @@ require "active_support/core_ext/string/access"
 
 require "uri"
 require "values"
+require "loggy"
 
 require "file_storage/version"
 require "file_storage/timing"
-require "file_storage/logger"
 require "file_storage/in_memory"
 require "file_storage/gcs"
 require "file_storage/disk"
@@ -66,7 +66,10 @@ module FileStorage
   end
 
   class KeyStorage
-    include FileStorage::Logger
+    include Loggy::InstanceLogger[
+      event_prefix: "key_storage",
+      default_context: :log_context
+    ]
 
     attr_reader :bucket, :key, :adapter_type
 
@@ -93,13 +96,13 @@ module FileStorage
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
       info("Downloading #{key}...",
-           event: "key_storage.download_started")
+           event: "download_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.download(bucket: bucket, key: key)
 
       info("Download of #{key} completed",
-           event: "key_storage.download_finished",
+           event: "download_finished",
            duration: FileStorage::Timing.monotonic_now - start)
 
       result
@@ -115,7 +118,7 @@ module FileStorage
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
       info("Uploading #{key}...",
-           event: "key_storage.upload_started")
+           event: "upload_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.upload!(
@@ -125,7 +128,7 @@ module FileStorage
       )
 
       info("Upload of #{key} completed",
-           event: "key_storage.upload_finished",
+           event: "upload_finished",
            duration: FileStorage::Timing.monotonic_now - start)
 
       "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
@@ -139,7 +142,7 @@ module FileStorage
     # @return [Array<String>] A list of keys in the format of `adapter://bucket/key`
     def list
       info("Listing using #{key} as prefix",
-           event: "key_storage.list_started")
+           event: "list_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.list(
@@ -149,7 +152,7 @@ module FileStorage
 
       info("Listing of #{key} completed",
            resource_count: result[:keys].count,
-           event: "key_storage.list_finished",
+           event: "list_finished",
            duration: FileStorage::Timing.monotonic_now - start)
 
       result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
