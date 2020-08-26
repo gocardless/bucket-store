@@ -68,6 +68,17 @@ RSpec.describe FileStorage do
           ])
         end
 
+        it "logs the operation" do
+          described_class.for("inmemory://bucket/").list
+
+          expect(Loggy::Testing.received(:info)).to include(
+            hash_including(event: "key_storage.list_started"),
+          )
+          expect(Loggy::Testing.received(:info)).to include(
+            hash_including(event: "key_storage.list_finished"),
+          )
+        end
+
         context "but the URI does not have a trailing /" do
           it "returns all the files in the bucket" do
             expect(described_class.for("inmemory://bucket").list).to match_array([
@@ -89,6 +100,17 @@ RSpec.describe FileStorage do
           to match(hash_including(content: "content1"))
       end
 
+      it "logs the operation" do
+        described_class.for("inmemory://bucket/file1").download
+
+        expect(Loggy::Testing.received(:info)).to include(
+          hash_including(event: "key_storage.download_started"),
+        )
+        expect(Loggy::Testing.received(:info)).to include(
+          hash_including(event: "key_storage.download_finished"),
+        )
+      end
+
       context "when we try to download a bucket" do
         it "raises an error" do
           expect { described_class.for("inmemory://bucket").download }.
@@ -101,6 +123,17 @@ RSpec.describe FileStorage do
       it "uploads the given file" do
         expect(described_class.for("inmemory://bucket/file1").upload!("hello")).
           to eq("inmemory://bucket/file1")
+      end
+
+      it "logs the operation" do
+        described_class.for("inmemory://bucket/file1").upload!("hello")
+
+        expect(Loggy::Testing.received(:info)).to include(
+          hash_including(event: "key_storage.upload_started"),
+        )
+        expect(Loggy::Testing.received(:info)).to include(
+          hash_including(event: "key_storage.upload_finished"),
+        )
       end
 
       context "when we try to download a bucket" do
