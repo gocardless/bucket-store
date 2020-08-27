@@ -8,7 +8,6 @@ Gem::Specification.new do |s|
   s.authors     = ["GoCardless Engineering"]
   s.email       = ["developers@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
-  s.required_ruby_version = ">= 2.7.0"
   s.description = <<-DESCRIPTION
     A helper library to access cloud storage services such as Google Cloud Storage.
   DESCRIPTION

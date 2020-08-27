@@ -29,3 +29,8 @@ RSpec/LetSetup:
 
 RSpec/MultipleExpectations:
   Max: 10
+
+# Disabled as it's breaking dependabot 
+Gemspec/RequiredRubyVersion:
+  Exclude:
+    - 'file_storage.gemspec'
