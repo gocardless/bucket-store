@@ -19,6 +19,7 @@ RSpec.configure do |config|
   end
 
   config.before do
+    Loggy::Testing.enable!
     FileStorage::InMemory.reset!
   end
 end
