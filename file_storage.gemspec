@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["lib/**/*", "README.md"]
 
-  s.add_dependency "activesupport", "~> 6.0.3"
+  s.add_dependency "activesupport", "~> 6.0.3.3"
   s.add_dependency "google-cloud-storage", "~> 1.28"
   s.add_dependency "values", "~> 1.8"
 
