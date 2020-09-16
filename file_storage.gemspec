@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency "google-cloud-storage", "~> 1.26"
   s.add_dependency "values", "~> 1.8"
 
-  s.add_development_dependency "gc_ruboconfig", "~> 2.16"
+  s.add_development_dependency "gc_ruboconfig", "~> 2.19"
   s.add_development_dependency "pry-byebug", "~> 3.6"
   s.add_development_dependency "rspec", "~> 3.9"
   s.add_development_dependency "rspec_junit_formatter", "~> 0.2"
