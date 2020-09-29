@@ -15,7 +15,8 @@ RSpec.configure do |config|
   if ENV["CIRCLECI"] ||
       ENV.fetch("GOCARDLESS_ENVIRONMENT", "development") == "development"
     require "loggy"
-    Loggy.logger.level = Logger::ERROR
+    Loggy.config.destination = File::NULL
+    Loggy.logger.level = Logger::DEBUG
   end
 
   config.before do
