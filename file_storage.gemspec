@@ -16,7 +16,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "activesupport", "~> 6.0.3"
   s.add_dependency "google-cloud-storage", "~> 1.29"
-  s.add_dependency "values", "~> 1.8"
 
   s.add_development_dependency "gc_ruboconfig", "~> 2.20"
   s.add_development_dependency "pry-byebug", "~> 3.9"
