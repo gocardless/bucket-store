@@ -101,13 +101,13 @@ module FileStorage
         bucket: bucket,
         key: key,
         page_size: page_size,
-      )
+      ).first
 
       FileStorage.logger.info(resource_count: result[:keys].count,
                               event: "key_storage.list_finished",
                               duration: FileStorage::Timing.monotonic_now - start)
 
-      result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
+      result.fetch(:keys, []).map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
     end
 
     # Deletes the referenced key.

@@ -36,16 +36,17 @@ module FileStorage
     def list(bucket:, key:, page_size:)
       root = Pathname.new(bucket_root(bucket))
 
-      matching_keys = Dir["#{root}/**/*"].
+      Dir["#{root}/**/*"].
         reject { |absolute_path| File.directory?(absolute_path) }.
         map { |full_path| Pathname.new(full_path).relative_path_from(root).to_s }.
         select { |f| f.start_with?(key) }.
-        first(page_size)
-
-      {
-        bucket: bucket,
-        keys: matching_keys,
-      }
+        each_slice(page_size).
+        map do |keys|
+        {
+          bucket: bucket,
+          keys: keys,
+        }
+      end.to_enum
     end
 
     def delete!(bucket:, key:)

@@ -43,14 +43,21 @@ module FileStorage
     end
 
     def list(bucket:, key:, page_size:)
-      matching_keys = get_bucket(bucket).
-        files(prefix: key, max: page_size).
-        map(&:name)
+      Enumerator.new do |yielder|
+        token = nil
 
-      {
-        bucket: bucket,
-        keys: matching_keys,
-      }
+        loop do
+          page = get_bucket(bucket).files(prefix: key, max: page_size, token: token)
+          yielder.yield({
+            bucket: bucket,
+            keys: page.map(&:name),
+          })
+
+          break if page.token.nil?
+
+          token = page.token
+        end
+      end
     end
 
     def delete!(bucket:, key:)
