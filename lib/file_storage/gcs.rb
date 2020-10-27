@@ -62,8 +62,10 @@ module FileStorage
 
     def get_bucket(name)
       # Lookup only checks that the bucket actually exist before doing any work on it.
-      # Unfortunately it also requires a set of permissions that are not currently
-      # granted for our service account.
+      # Unfortunately it also requires a set of extra permissions that are not necessarily
+      # going to be granted for service accounts. Given that if the bucket doesn't exist
+      # we'll get errors down the line anyway, we can safely skip the lookup without loss
+      # of generality.
       storage.bucket(name, skip_lookup: true)
     end
   end
