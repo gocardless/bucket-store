@@ -95,7 +95,7 @@ RSpec.describe FileStorage::Disk do
   describe "#list" do
     context "when the bucket is empty" do
       it "returns an empty list" do
-        expect(instance.list(bucket: bucket, key: "whatever")).to eq(
+        expect(instance.list(bucket: bucket, key: "whatever", page_size: 1000)).to eq(
           bucket: bucket,
           keys: [],
         )
@@ -113,7 +113,7 @@ RSpec.describe FileStorage::Disk do
 
       context "and we provide a matching prefix" do
         it "returns only the matching items" do
-          expect(instance.list(bucket: bucket, key: "2019-01")).to match(
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 1000)).to match(
             bucket: bucket,
             keys: match_array(%w[2019-01/hello1 2019-01/hello2 2019-01/hello3]),
           )
@@ -122,11 +122,18 @@ RSpec.describe FileStorage::Disk do
 
       context "when the prefix doesn't match anything" do
         it "returns an empty list" do
-          expect(instance.list(bucket: bucket, key: "YOLO")).to match(
+          expect(instance.list(bucket: bucket, key: "YOLO", page_size: 1000)).to match(
             bucket: bucket,
             keys: [],
           )
         end
+      end
+
+      it "returns a subset of the matching keys" do
+        expect(instance.list(bucket: bucket, key: "2019-01", page_size: 2)).to match(
+          bucket: bucket,
+          keys: have_attributes(length: 2),
+        )
       end
     end
   end

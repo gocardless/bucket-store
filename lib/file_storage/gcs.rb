@@ -42,8 +42,11 @@ module FileStorage
       }
     end
 
-    def list(bucket:, key:)
-      matching_keys = get_bucket(bucket).files(prefix: key).map(&:name)
+    def list(bucket:, key:, page_size:)
+      matching_keys = get_bucket(bucket).
+        files(prefix: key, max: page_size).
+        map(&:name)
+
       {
         bucket: bucket,
         keys: matching_keys,

@@ -84,17 +84,23 @@ module FileStorage
     # This will return a list of valid keys in the format of `adapter://bucket/key`. The keys in
     # the list will share the reference key as a prefix.
     #
+    # @param [Integer] page_size
+    #   the number of items to be returned in the call. Note that if the `page_size` is
+    #   smaller than the available keys for the given URI, there's no guarantee on the
+    #   ordering upon which the keys will be returned and it's possible for two calls on
+    #   the same URI and same `page_size` to return different result sets.
     # @return [Array<String>] A list of keys in the format of `adapter://bucket/key`
     #
     # @example List all files under a given prefix
     #   FileStorage.for("inmemory://bucket/prefix").list
-    def list
+    def list(page_size: 1000)
       FileStorage.logger.info(event: "key_storage.list_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.list(
         bucket: bucket,
         key: key,
+        page_size: page_size,
       )
 
       FileStorage.logger.info(resource_count: result[:keys].count,

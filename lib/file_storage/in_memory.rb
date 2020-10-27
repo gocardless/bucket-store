@@ -41,8 +41,11 @@ module FileStorage
       }
     end
 
-    def list(bucket:, key:)
-      matching_keys = @buckets[bucket].keys.select { |k| k.start_with?(key) }
+    def list(bucket:, key:, page_size:)
+      matching_keys = @buckets[bucket].keys.
+        select { |k| k.start_with?(key) }.
+        first(page_size)
+
       {
         bucket: bucket,
         keys: matching_keys,
