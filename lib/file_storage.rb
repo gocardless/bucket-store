@@ -4,7 +4,6 @@ require "active_support"
 require "active_support/core_ext/string/access"
 
 require "uri"
-require "values"
 require "loggy"
 
 require "file_storage/version"
@@ -28,7 +27,15 @@ module FileStorage
     disk: Disk,
   }.freeze
 
-  class KeyCtx < Value.new(:adapter, :bucket, :key)
+  class KeyCtx
+    attr_reader :adapter, :bucket, :key
+
+    def initialize(adapter:, bucket:, key:)
+      @adapter = adapter
+      @bucket = bucket
+      @key = key
+    end
+
     def to_s
       "<KeyCtx adapter:#{adapter} bucket:#{bucket} key:#{key}>"
     end
@@ -41,9 +48,9 @@ module FileStorage
       # `list`, but not during a `download`).
       key = uri.path.sub!(%r{/}, "") || ""
 
-      KeyCtx.with(adapter: uri.scheme,
-                  bucket: uri.host,
-                  key: key)
+      KeyCtx.new(adapter: uri.scheme,
+                 bucket: uri.host,
+                 key: key)
     end
   end
 
