@@ -47,6 +47,12 @@ module FileStorage
       }
     end
 
+    def delete!(bucket:, key:)
+      File.unlink(key_path(bucket, key))
+
+      true
+    end
+
     private
 
     attr_reader :base_dir

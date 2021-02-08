@@ -130,4 +130,15 @@ RSpec.describe FileStorage::Disk do
       end
     end
   end
+
+  describe "#delete!" do
+    before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+
+    it "deletes the given content" do
+      expect(instance.delete!(bucket: bucket, key: "hello")).to eq(true)
+
+      expect { instance.download(bucket: bucket, key: "hello").download }.
+        to raise_error(Errno::ENOENT, /No such file or directory/)
+    end
+  end
 end
