@@ -143,5 +143,15 @@ RSpec.describe FileStorage do
         end
       end
     end
+
+    describe "delete!" do
+      before do
+        described_class.for("inmemory://bucket/file1").upload!("content1")
+      end
+
+      it "downloads the given file" do
+        expect(described_class.for("inmemory://bucket/file1").delete!).to eq(true)
+      end
+    end
   end
 end

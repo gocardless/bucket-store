@@ -48,5 +48,11 @@ module FileStorage
         keys: matching_keys,
       }
     end
+
+    def delete!(bucket:, key:)
+      @buckets[bucket].delete(key)
+
+      true
+    end
   end
 end

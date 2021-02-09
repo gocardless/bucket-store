@@ -50,6 +50,12 @@ module FileStorage
       }
     end
 
+    def delete!(bucket:, key:)
+      get_bucket(bucket).file(key).delete
+
+      true
+    end
+
     private
 
     attr_reader :storage

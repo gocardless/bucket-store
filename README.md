@@ -6,7 +6,7 @@ between different storage options. Callers don't need to worry about the specifi
 of where and how a file is stored and retrieved as long as the given key is valid.
 
 Keys within the `FileStorage` are URI strings that can universally locate an object
-in the given provider. A valid key example would be 
+in the given provider. A valid key example would be
 `gs://gc-prd-nx-incoming/file/path.json`.
 
 ## Usage
@@ -131,4 +131,10 @@ FileStorage.for("inmemory://bucket/path/file.xml").download
 ```ruby
 FileStorage.for("inmemory://bucket/path/").list
 => ["inmemory://bucket/path/file.xml"]
+```
+
+### Delete a file
+```ruby
+FileStorage.for("inmemory://bucket/path/").delete!
+=> true
 ```

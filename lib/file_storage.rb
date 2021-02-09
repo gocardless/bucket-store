@@ -162,6 +162,22 @@ module FileStorage
       result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
     end
 
+    # Deletes a given key
+    # @return [true]
+    def delete!
+      info("Deleting file",
+           event: "delete_started")
+
+      start = FileStorage::Timing.monotonic_now
+      adapter.delete!(bucket: bucket, key: key)
+
+      info("File deleted",
+           event: "delete_finished",
+           duration: FileStorage::Timing.monotonic_now - start)
+
+      true
+    end
+
     private
 
     attr_reader :adapter
