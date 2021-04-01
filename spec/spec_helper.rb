@@ -12,15 +12,7 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
-  if ENV["CIRCLECI"] ||
-      ENV.fetch("GOCARDLESS_ENVIRONMENT", "development") == "development"
-    require "loggy"
-    Loggy.config.destination = File::NULL
-    Loggy.logger.level = Logger::DEBUG
-  end
-
   config.before do
-    Loggy::Testing.enable!
     FileStorage::InMemory.reset!
   end
 end
