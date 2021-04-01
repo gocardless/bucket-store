@@ -92,15 +92,13 @@ module FileStorage
     def download
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
-      info("Downloading #{key}...",
-           event: "key_storage.download_started")
+      FileStorage.logger.info(event: "key_storage.download_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.download(bucket: bucket, key: key)
 
-      info("Download of #{key} completed",
-           event: "key_storage.download_finished",
-           duration: FileStorage::Timing.monotonic_now - start)
+      FileStorage.logger.info(event: "key_storage.download_finished",
+                              duration: FileStorage::Timing.monotonic_now - start)
 
       result
     end
@@ -114,8 +112,8 @@ module FileStorage
     def upload!(content)
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
-      info("Uploading #{key}...",
-           event: "key_storage.upload_started")
+      FileStorage.logger.info(event: "key_storage.upload_started",
+                              **log_context)
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.upload!(
@@ -124,9 +122,9 @@ module FileStorage
         content: content,
       )
 
-      info("Upload of #{key} completed",
-           event: "key_storage.upload_finished",
-           duration: FileStorage::Timing.monotonic_now - start)
+      FileStorage.logger.info(event: "key_storage.upload_finished",
+                              duration: FileStorage::Timing.monotonic_now - start,
+                              **log_context)
 
       "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
     end
@@ -138,8 +136,7 @@ module FileStorage
     #
     # @return [Array<String>] A list of keys in the format of `adapter://bucket/key`
     def list
-      info("Listing using #{key} as prefix",
-           event: "key_storage.list_started")
+      FileStorage.logger.info(event: "key_storage.list_started")
 
       start = FileStorage::Timing.monotonic_now
       result = adapter.list(
@@ -147,10 +144,9 @@ module FileStorage
         key: key,
       )
 
-      info("Listing of #{key} completed",
-           resource_count: result[:keys].count,
-           event: "key_storage.list_finished",
-           duration: FileStorage::Timing.monotonic_now - start)
+      FileStorage.logger.info(resource_count: result[:keys].count,
+                              event: "key_storage.list_finished",
+                              duration: FileStorage::Timing.monotonic_now - start)
 
       result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
     end
@@ -158,15 +154,13 @@ module FileStorage
     # Deletes a given key
     # @return [true]
     def delete!
-      info("Deleting file",
-           event: "key_storage.delete_started")
+      FileStorage.logger.info(event: "key_storage.delete_started")
 
       start = FileStorage::Timing.monotonic_now
       adapter.delete!(bucket: bucket, key: key)
 
-      info("File deleted",
-           event: "key_storage.delete_finished",
-           duration: FileStorage::Timing.monotonic_now - start)
+      FileStorage.logger.info(event: "key_storage.delete_finished",
+                              duration: FileStorage::Timing.monotonic_now - start)
 
       true
     end
@@ -174,10 +168,6 @@ module FileStorage
     private
 
     attr_reader :adapter
-
-    def info(msg, **args)
-      FileStorage.logger.info(msg, **log_context.merge(**args))
-    end
 
     def log_context
       {
