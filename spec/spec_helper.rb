@@ -12,6 +12,9 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  # Silence log output when running tests
+  FileStorage.configuration.logger = Logger.new(nil)
+
   config.before do
     FileStorage::InMemory.reset!
   end
