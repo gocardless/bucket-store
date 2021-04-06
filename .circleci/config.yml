@@ -38,6 +38,22 @@ jobs:
           name: Rubocop
           command: bundle exec rubocop
 
+  type_signatures:
+    parameters:
+      ruby_version:
+        type: string
+    docker:
+      - image: circleci/ruby:<< parameters.ruby_version >>
+    steps:
+      - add_ssh_keys
+      - checkout
+      - *restore_bundle
+      - *bundle_install
+      - *cache_bundle
+      - run:
+          name: Check type signatures
+          command: bundle exec steep check
+
   rspec:
     parameters:
       ruby_version:
@@ -59,6 +75,10 @@ workflows:
   tests:
     jobs:
       - code_quality:
+          matrix:
+            parameters:
+              ruby_version: ["3.0"]
+      - type_signatures:
           matrix:
             parameters:
               ruby_version: ["3.0"]

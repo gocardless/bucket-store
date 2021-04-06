@@ -1,0 +1,283 @@
+# An abstraction layer on the top of file cloud storage systems such as Google Cloud
+# Storage or S3. This module exposes a generic interface that allows interoperability
+# between different storage options. Callers don't need to worry about the specifics
+# of where and how a file is stored and retrieved as long as the given key is valid.
+# 
+# Keys within the {FileStorage} are URI strings that can universally locate an object
+# in the given provider. A valid key example would be:
+# `gs://gc-prd-nx-incoming/file/path.json`.
+module FileStorage
+  VERSION: untyped
+
+  # sord omit - no YARD return type given, using untyped
+  def self.configure: () -> untyped
+
+  # sord omit - no YARD return type given, using untyped
+  def self.logger: () -> untyped
+
+  # Given a `key` in the format of `adapter://bucket/key` returns the corresponding
+  # adapter that will allow to manipulate (e.g. download, upload or list) such key.
+  # 
+  # Currently supported adapters are `gs` (Google Cloud Storage), `inmemory` (an
+  # in-memory key-value storage) and `disk` (a disk-backed key-value store).
+  # 
+  # _@param_ `key` — The reference key
+  # 
+  # _@return_ — An interface to the adapter that can handle requests on the given key
+  # 
+  # Configure {FileStorage} for Google Cloud Storage
+  # ```ruby
+  # FileStorage.for("gs://the_bucket/a/valid/key")
+  # ```
+  def self.for: (String key) -> KeyStorage
+
+  class Gcs
+    DEFAULT_TIMEOUT_SECONDS: untyped
+
+    # sord omit - no YARD type given for "timeout_seconds", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def self.build: (?untyped timeout_seconds) -> untyped
+
+    # sord omit - no YARD type given for "timeout_seconds", using untyped
+    def initialize: (untyped timeout_seconds) -> void
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD type given for "content:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def upload!: (bucket: untyped, key: untyped, content: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def download: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def list: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def delete!: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "name", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def get_bucket: (untyped name) -> untyped
+
+    # sord omit - no YARD type given for :storage, using untyped
+    # Returns the value of attribute storage.
+    attr_reader storage: untyped
+  end
+
+  class Disk
+    # sord omit - no YARD type given for "base_dir", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def self.build: (?untyped base_dir) -> untyped
+
+    # sord omit - no YARD type given for "base_dir", using untyped
+    def initialize: (untyped base_dir) -> void
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD type given for "content:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def upload!: (bucket: untyped, key: untyped, content: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def download: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def list: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def delete!: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def bucket_root: (untyped bucket) -> untyped
+
+    # sord omit - no YARD type given for "bucket", using untyped
+    # sord omit - no YARD type given for "key", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def key_path: (untyped bucket, untyped key) -> untyped
+
+    # sord omit - no YARD type given for "filename", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def sanitize_filename: (untyped filename) -> untyped
+
+    # sord omit - no YARD type given for :base_dir, using untyped
+    # Returns the value of attribute base_dir.
+    attr_reader base_dir: untyped
+  end
+
+  module Timing
+    # "Wall clock is for telling time, monotonic clock is for measuring time."
+    # 
+    # When timing events, ensure we ask for a monotonically adjusted clock time
+    # to avoid changes to the system time from being reflected in our
+    # measurements.
+    # 
+    # See this article for a good explanation and a deeper dive:
+    # https://blog.dnsimple.com/2018/03/elapsed-time-with-ruby-the-right-way/
+    def self.monotonic_now: () -> Float
+  end
+
+  class InMemory
+    # sord omit - no YARD return type given, using untyped
+    def self.build: () -> untyped
+
+    # sord omit - no YARD return type given, using untyped
+    def self.instance: () -> untyped
+
+    # sord omit - no YARD return type given, using untyped
+    def self.reset!: () -> untyped
+
+    def initialize: () -> void
+
+    # sord omit - no YARD return type given, using untyped
+    def reset!: () -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD type given for "content:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def upload!: (bucket: untyped, key: untyped, content: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def download: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def list: (bucket: untyped, key: untyped) -> untyped
+
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def delete!: (bucket: untyped, key: untyped) -> untyped
+  end
+
+  class KeyContext
+    # sord omit - no YARD type given for "adapter:", using untyped
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    def initialize: (adapter: untyped, bucket: untyped, key: untyped) -> void
+
+    # sord omit - no YARD return type given, using untyped
+    def to_s: () -> untyped
+
+    # sord omit - no YARD type given for "raw_key", using untyped
+    # sord omit - no YARD return type given, using untyped
+    def self.parse: (untyped raw_key) -> untyped
+
+    # sord omit - no YARD type given for :adapter, using untyped
+    # Returns the value of attribute adapter.
+    attr_reader adapter: untyped
+
+    # sord omit - no YARD type given for :bucket, using untyped
+    # Returns the value of attribute bucket.
+    attr_reader bucket: untyped
+
+    # sord omit - no YARD type given for :key, using untyped
+    # Returns the value of attribute key.
+    attr_reader key: untyped
+
+    class KeyParseException < RuntimeError
+    end
+  end
+
+  class KeyStorage
+    SUPPORTED_ADAPTERS: untyped
+
+    # sord omit - no YARD type given for "adapter:", using untyped
+    # sord omit - no YARD type given for "bucket:", using untyped
+    # sord omit - no YARD type given for "key:", using untyped
+    def initialize: (adapter: untyped, bucket: untyped, key: untyped) -> void
+
+    # sord omit - no YARD return type given, using untyped
+    def filename: () -> untyped
+
+    # Downloads the content of the reference key
+    # 
+    # _@return_ — Hash{Symbol => Object}
+    # A hash that includes the download result. The hash keys reference different aspects of the
+    # download (e.g. `:key` and `:content` will include respectively the original key's name and
+    # the actual download's content)
+    def download: () -> ::Hash[Symbol, Object]
+
+    # Uploads the given content to the reference key location.
+    # 
+    # If the `key` already exists, its content will be replaced by the one in input.
+    # 
+    # _@param_ `content` — The content to upload
+    # 
+    # _@return_ — The final `key` where the content has been uploaded
+    def upload!: (String content) -> String
+
+    # Lists all keys for the current adapter that have the reference key as prefix
+    # 
+    # This will return a list of valid keys in the format of `adapter://bucket/key`. The keys in
+    # the list will share the reference key as a prefix.
+    # 
+    # _@return_ — A list of keys in the format of `adapter://bucket/key`
+    def list: () -> ::Array[String]
+
+    # Deletes a given key
+    def delete!: () -> bool
+
+    # sord omit - no YARD return type given, using untyped
+    def log_context: () -> untyped
+
+    # sord omit - no YARD type given for :bucket, using untyped
+    # Returns the value of attribute bucket.
+    attr_reader bucket: untyped
+
+    # sord omit - no YARD type given for :key, using untyped
+    # Returns the value of attribute key.
+    attr_reader key: untyped
+
+    # sord omit - no YARD type given for :adapter_type, using untyped
+    # Returns the value of attribute adapter_type.
+    attr_reader adapter_type: untyped
+
+    # sord omit - no YARD type given for :adapter, using untyped
+    # Returns the value of attribute adapter.
+    attr_reader adapter: untyped
+  end
+
+  module UriBuilder
+    # Sanitizes the input as not all characters are valid as either URIs or as bucket keys.
+    # When we get them we want to replace them with something Nexus can process.
+    # 
+    # _@param_ `input` — the string to sanitise
+    # 
+    # _@param_ `replacement` — the replacement string for invalid characters
+    # 
+    # _@return_ — the sanitised string
+    def self.sanitize: (String input, ?String replacement) -> String
+  end
+
+  class Configuration
+    # sord omit - no YARD type given for :logger, using untyped
+    # Specifies a custom logger.
+    # 
+    # Note that {FileStorage} uses structured logging, any custom logger passed must also
+    # support it.
+    # 
+    # Use stderr as main output device
+    # ```ruby
+    # config.logger = Logger.new($stderr)
+    # ```
+    attr_accessor logger: untyped
+  end
+end
