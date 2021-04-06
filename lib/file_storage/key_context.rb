@@ -6,6 +6,8 @@ module FileStorage
   class KeyContext
     attr_reader :adapter, :bucket, :key
 
+    class KeyParseException < RuntimeError; end
+
     def initialize(adapter:, bucket:, key:)
       @adapter = adapter
       @bucket = bucket
@@ -23,6 +25,8 @@ module FileStorage
       # or may not be a valid configuration (e.g. an empty key is likely valid on a
       # `list`, but not during a `download`).
       key = uri.path.sub!(%r{/}, "") || ""
+
+      raise KeyParseException if [uri.scheme, uri.host, key].map(&:nil?).any?
 
       KeyContext.new(adapter: uri.scheme,
                      bucket: uri.host,
