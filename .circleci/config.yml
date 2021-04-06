@@ -13,19 +13,21 @@ references:
 
   cache_bundle: &cache_bundle
     save_cache:
-      key: bundle-{{ checksum ".ruby-version" }}-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
+      key: bundle-<< parameters.ruby_version >>-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
       paths:
         - vendor/bundle
 
   restore_bundle: &restore_bundle
     restore_cache:
-      key: bundle-{{ checksum ".ruby-version" }}-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
-
+      key: bundle-<< parameters.ruby_version >>-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
 
 jobs:
   code_quality:
+    parameters:
+      ruby_version:
+        type: string
     docker:
-      - image: circleci/ruby:2.7
+      - image: circleci/ruby:<< parameters.ruby_version >>
     steps:
       - add_ssh_keys
       - checkout
@@ -37,8 +39,11 @@ jobs:
           command: bundle exec rubocop
 
   rspec:
+    parameters:
+      ruby_version:
+        type: string
     docker:
-      - image: circleci/ruby:2.7
+      - image: circleci/ruby:<< parameters.ruby_version >>
     steps:
       - add_ssh_keys
       - checkout
@@ -53,5 +58,11 @@ workflows:
   version: 2
   tests:
     jobs:
-      - code_quality
-      - rspec
+      - code_quality:
+          matrix:
+            parameters:
+              ruby_version: ["2.7"]
+      - rspec:
+          matrix:
+            parameters:
+              ruby_version: ["2.5", "2.6", "2.7"]
