@@ -30,7 +30,7 @@ module FileStorage
 
     # Downloads the content of the reference key
     #
-    # @return [Hash{Symbol => Object}
+    # @return [Hash<Symbol, Object>]
     #   A hash that includes the download result. The hash keys reference different aspects of the
     #   download (e.g. `:key` and `:content` will include respectively the original key's name and
     #   the actual download's content)
