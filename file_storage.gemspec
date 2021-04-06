@@ -27,7 +27,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rubocop", "~> 1.12"
   s.add_development_dependency "rubocop-performance", "~> 1.10"
   s.add_development_dependency "rubocop-rspec", "~> 2.2"
-  s.add_development_dependency "sord", "~> 3.0.1"
-  s.add_development_dependency "steep", "~> 0.43.1"
-  s.add_development_dependency "yard", "~> 0.9.26"
+  s.add_development_dependency "steep", "~> 0.44.1"
 end

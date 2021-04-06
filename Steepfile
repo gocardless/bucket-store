@@ -3,6 +3,7 @@
 target :lib do
   signature "sig"
 
-  check "lib"                       # Directory name
-  check "Gemfile"                   # File name
+  check "lib"
+
+  library "tmpdir"
 end

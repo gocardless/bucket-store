@@ -13,7 +13,7 @@ module FileStorage
     #
     # @return [Float]
     def self.monotonic_now
-      Process.clock_gettime(Process::CLOCK_MONOTONIC)
+      Process.clock_gettime(Process::CLOCK_MONOTONIC).to_f
     end
   end
 end

@@ -128,6 +128,7 @@ module FileStorage
 
     attr_reader :adapter
 
+    # @return [Hash<Symbol => String>]
     def log_context
       {
         bucket: bucket,

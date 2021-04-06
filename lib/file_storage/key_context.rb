@@ -18,8 +18,9 @@ module FileStorage
       "<KeyContext adapter:#{adapter} bucket:#{bucket} key:#{key}>"
     end
 
+    # @param raw_key [String]
     def self.parse(raw_key)
-      uri = URI(raw_key)
+      uri = URI.parse(raw_key)
 
       # A key should never be `nil` but can be empty. Depending on the operation, this may
       # or may not be a valid configuration (e.g. an empty key is likely valid on a
