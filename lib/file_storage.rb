@@ -12,7 +12,7 @@ require "file_storage/key_storage"
 #
 # Keys within the {FileStorage} are URI strings that can universally locate an object
 # in the given provider. A valid key example would be:
-# `gs://gc-prd-nx-incoming/file/path.json`.
+# `gs://gcs-bucket/file/path.json`.
 module FileStorage
   class << self
     attr_writer :configuration
