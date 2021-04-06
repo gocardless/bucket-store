@@ -1,73 +1,18 @@
 # frozen_string_literal: true
 
-require "uri"
-
 require "file_storage/timing"
 require "file_storage/in_memory"
 require "file_storage/gcs"
 require "file_storage/disk"
 
-# An abstraction layer on the top of file cloud storage systems such as Google Cloud
-# Storage or S3. This module exposes a generic interface that allows interoperability
-# between different storage options. Callers don't need to worry about the specifics
-# of where and how a file is stored and retrieved as long as the given key is valid.
-#
-# Keys within the {FileStorage} are URI strings that can universally locate an object
-# in the given provider. A valid key example would be:
-# `gs://gc-prd-nx-incoming/file/path.json`.
 module FileStorage
-  SUPPORTED_ADAPTERS = {
-    gs: Gcs,
-    inmemory: InMemory,
-    disk: Disk,
-  }.freeze
-
-  class KeyCtx
-    attr_reader :adapter, :bucket, :key
-
-    def initialize(adapter:, bucket:, key:)
-      @adapter = adapter
-      @bucket = bucket
-      @key = key
-    end
-
-    def to_s
-      "<KeyCtx adapter:#{adapter} bucket:#{bucket} key:#{key}>"
-    end
-
-    def self.parse(raw_key)
-      uri = URI(raw_key)
-
-      # A key should never be `nil` but can be empty. Depending on the operation, this may
-      # or may not be a valid configuration (e.g. an empty key is likely valid on a
-      # `list`, but not during a `download`).
-      key = uri.path.sub!(%r{/}, "") || ""
-
-      KeyCtx.new(adapter: uri.scheme,
-                 bucket: uri.host,
-                 key: key)
-    end
-  end
-
-  # Given a `key` in the format of `adapter://bucket/key` returns the corresponding
-  # adapter that will allow to manipulate (e.g. download, upload or list) such key.
-  #
-  # Currently supported adapters are `gs` (Google Cloud Storage), `inmemory` (an
-  # in-memory key-value storage) and `disk` (a disk-backed key-value store).
-  #
-  # @param [String] key The reference key
-  # @return [KeyStorage] An interface to the adapter that can handle requests on the given key
-  # @example Configure {FileStorage} for Google Cloud Storage
-  #   FileStorage.for("gs://the_bucket/a/valid/key")
-  def self.for(key)
-    ctx = KeyCtx.parse(key)
-
-    KeyStorage.new(adapter: ctx.adapter,
-                   bucket: ctx.bucket,
-                   key: ctx.key)
-  end
-
   class KeyStorage
+    SUPPORTED_ADAPTERS = {
+      gs: Gcs,
+      inmemory: InMemory,
+      disk: Disk,
+    }.freeze
+
     attr_reader :bucket, :key, :adapter_type
 
     def initialize(adapter:, bucket:, key:)
