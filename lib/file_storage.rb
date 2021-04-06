@@ -21,6 +21,15 @@ module FileStorage
       @configuration ||= FileStorage::Configuration.new
     end
 
+    # Yields a {FileStorage::Configuration} object that allows callers to configure
+    # FileStorage's behaviour.
+    #
+    # @yield [FileStorage::Configuration]
+    #
+    # @example Configure FileStorage to use a different logger than the default
+    #   FileStorage.configure do |config|
+    #     config.logger = Logger.new($stderr)
+    #   end
     def configure
       yield(configuration)
     end

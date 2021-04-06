@@ -34,6 +34,9 @@ module FileStorage
     #   A hash that includes the download result. The hash keys reference different aspects of the
     #   download (e.g. `:key` and `:content` will include respectively the original key's name and
     #   the actual download's content)
+    #
+    # @example Download a key
+    #   FileStorage.for("inmemory://bucket/file.xml").download
     def download
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
@@ -54,6 +57,8 @@ module FileStorage
     #
     # @param [String] content The content to upload
     # @return [String] The final `key` where the content has been uploaded
+    # @example Upload a file
+    #   FileStorage.for("inmemory://bucket/file.xml").upload("hello world")
     def upload!(content)
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
@@ -80,6 +85,9 @@ module FileStorage
     # the list will share the reference key as a prefix.
     #
     # @return [Array<String>] A list of keys in the format of `adapter://bucket/key`
+    #
+    # @example List all files under a given prefix
+    #   FileStorage.for("inmemory://bucket/prefix").list
     def list
       FileStorage.logger.info(event: "key_storage.list_started")
 
@@ -96,8 +104,14 @@ module FileStorage
       result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
     end
 
-    # Deletes a given key
-    # @return [true]
+    # Deletes the referenced key.
+    #
+    # Note that this method will always return true.
+    #
+    # @return [bool]
+    #
+    # @example Delete a file
+    #   FileStorage.for("inmemory://bucket/file.txt").delete!
     def delete!
       FileStorage.logger.info(event: "key_storage.delete_started")
 
