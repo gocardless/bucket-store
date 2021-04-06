@@ -150,6 +150,6 @@ FileStorage.for("inmemory://bucket/path/").list
 
 ### Delete a file
 ```ruby
-FileStorage.for("inmemory://bucket/path/").delete!
+FileStorage.for("inmemory://bucket/path/file.xml").delete!
 => true
 ```
