@@ -16,6 +16,15 @@ In order to make use of this, you'll first need to add this gem to your `Gemfile
 gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
 ```
 
+Some attributes can be configured via `FileStorage.configure`. If using Rails, you want to
+add a new initializer for `FileStorage`. Example:
+
+```ruby
+FileStorage.configure do |config|
+  config.logger = Logger.new($stderr)
+end
+```
+
 If using RSpec, you'll probably want to add this line to RSpec's config block (see
 the *Adapters* section for more details):
 
@@ -50,6 +59,12 @@ all the resources under that specific hierarchy:
 - `gs://gc-prd-nx-us-ach-submissions/live-production/credits/`
 - `inmemory://bucket/separator/`
 - `disk://hello/path`
+
+## Configuration
+`FileStorage` exposes some configurable attributes via `FileStorage.configure`. If
+necessary this should be called at startup time before any other method is invoked.
+
+- `logger`: custom logger class. By default, logs will be sent to stdout.
 
 ## Adapters
 

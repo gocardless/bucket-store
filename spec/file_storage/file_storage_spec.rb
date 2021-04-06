@@ -69,14 +69,14 @@ RSpec.describe FileStorage do
         end
 
         it "logs the operation" do
-          described_class.for("inmemory://bucket/").list
-
-          expect(Loggy::Testing.received(:info)).to include(
+          expect(described_class.logger).to receive(:info).with(
             hash_including(event: "key_storage.list_started"),
           )
-          expect(Loggy::Testing.received(:info)).to include(
+          expect(described_class.logger).to receive(:info).with(
             hash_including(event: "key_storage.list_finished"),
           )
+
+          described_class.for("inmemory://bucket/").list
         end
 
         context "but the URI does not have a trailing /" do
@@ -101,14 +101,14 @@ RSpec.describe FileStorage do
       end
 
       it "logs the operation" do
-        described_class.for("inmemory://bucket/file1").download
-
-        expect(Loggy::Testing.received(:info)).to include(
+        expect(described_class.logger).to receive(:info).with(
           hash_including(event: "key_storage.download_started"),
         )
-        expect(Loggy::Testing.received(:info)).to include(
+        expect(described_class.logger).to receive(:info).with(
           hash_including(event: "key_storage.download_finished"),
         )
+
+        described_class.for("inmemory://bucket/file1").download
       end
 
       context "when we try to download a bucket" do
@@ -126,17 +126,17 @@ RSpec.describe FileStorage do
       end
 
       it "logs the operation" do
-        described_class.for("inmemory://bucket/file1").upload!("hello")
-
-        expect(Loggy::Testing.received(:info)).to include(
+        expect(described_class.logger).to receive(:info).with(
           hash_including(event: "key_storage.upload_started"),
         )
-        expect(Loggy::Testing.received(:info)).to include(
+        expect(described_class.logger).to receive(:info).with(
           hash_including(event: "key_storage.upload_finished"),
         )
+
+        described_class.for("inmemory://bucket/file1").upload!("hello")
       end
 
-      context "when we try to download a bucket" do
+      context "when we try to upload a bucket" do
         it "raises an error" do
           expect { described_class.for("inmemory://bucket").upload!("content") }.
             to raise_error(ArgumentError, /key cannot be empty/i)
@@ -149,7 +149,7 @@ RSpec.describe FileStorage do
         described_class.for("inmemory://bucket/file1").upload!("content1")
       end
 
-      it "downloads the given file" do
+      it "deletes the given file" do
         expect(described_class.for("inmemory://bucket/file1").delete!).to eq(true)
       end
     end
