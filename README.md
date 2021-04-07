@@ -1,4 +1,4 @@
-# file-storage
+# FileStorage
 
 An abstraction layer on the top of file cloud storage systems such as Google Cloud
 Storage or S3. This module exposes a generic interface that allows interoperability
@@ -31,6 +31,8 @@ the *Adapters* section for more details):
 ```ruby
 config.before { FileStorage::InMemory.reset! }
 ```
+
+For our policy on compatibility with Ruby versions, see [COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Design and Architecture
 The main principle behind `FileStorage` is that each resource or group of resources must
