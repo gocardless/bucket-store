@@ -7,7 +7,7 @@ of where and how a file is stored and retrieved as long as the given key is vali
 
 Keys within the `FileStorage` are URI strings that can universally locate an object
 in the given provider. A valid key example would be
-`gs://gc-prd-nx-incoming/file/path.json`.
+`gs://a-gcs-bucket/file/path.json`.
 
 ## Usage
 In order to make use of this, you'll first need to add this gem to your `Gemfile`:
@@ -42,7 +42,7 @@ be unequivocally identifiable by a URI. The URI is always composed of three part
 
 As an example, all the following are valid URIs:
 
-- `gs://gc-prd-nx-us-ach-submissions/live-production/credits/2020-01-01.xml`
+- `gs://gcs-bucket/path/to/file.xml`
 - `inmemory://bucket/separator/file.xml`
 - `disk://hello/path/to/file.json`
 
@@ -56,7 +56,7 @@ part of the hierarchy via `/`.
 This means that the following are also valid URIs in `FileStorage` but they refer to
 all the resources under that specific hierarchy:
 
-- `gs://gc-prd-nx-us-ach-submissions/live-production/credits/`
+- `gs://gcs-bucket/path/subpath/`
 - `inmemory://bucket/separator/`
 - `disk://hello/path`
 

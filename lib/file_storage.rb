@@ -12,7 +12,7 @@ require "file_storage/key_storage"
 #
 # Keys within the {FileStorage} are URI strings that can universally locate an object
 # in the given provider. A valid key example would be:
-# `gs://gc-prd-nx-incoming/file/path.json`.
+# `gs://gcs-bucket/file/path.json`.
 module FileStorage
   class << self
     attr_writer :configuration
@@ -21,6 +21,15 @@ module FileStorage
       @configuration ||= FileStorage::Configuration.new
     end
 
+    # Yields a {FileStorage::Configuration} object that allows callers to configure
+    # FileStorage's behaviour.
+    #
+    # @yield [FileStorage::Configuration]
+    #
+    # @example Configure FileStorage to use a different logger than the default
+    #   FileStorage.configure do |config|
+    #     config.logger = Logger.new($stderr)
+    #   end
     def configure
       yield(configuration)
     end
