@@ -10,10 +10,10 @@ in the given provider. A valid key example would be
 `gs://a-gcs-bucket/file/path.json`.
 
 ## Usage
-In order to make use of this, you'll first need to add this gem to your `Gemfile`:
+This library is distributed as a Ruby gem, and we recommend adding it your Gemfile:
 
 ```ruby
-gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
+gem "file-storage"
 ```
 
 Some attributes can be configured via `FileStorage.configure`. If using Rails, you want to
