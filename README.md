@@ -161,4 +161,4 @@ FileStorage.for("inmemory://bucket/path/file.xml").delete!
 * FileStorage is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 * Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/file-storage.
 
-GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/jobs).
+GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/careers/).
