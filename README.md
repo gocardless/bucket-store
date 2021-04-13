@@ -10,7 +10,7 @@ in the given provider. A valid key example would be
 `gs://a-gcs-bucket/file/path.json`.
 
 ## Usage
-This library is distributed as a Ruby gem, and we recommend adding it your Gemfile:
+This library is distributed as a Ruby gem, and we recommend adding it to your Gemfile:
 
 ```ruby
 gem "file-storage"
