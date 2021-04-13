@@ -1,4 +1,4 @@
-# file-storage
+# FileStorage
 
 An abstraction layer on the top of file cloud storage systems such as Google Cloud
 Storage or S3. This module exposes a generic interface that allows interoperability
@@ -10,10 +10,10 @@ in the given provider. A valid key example would be
 `gs://a-gcs-bucket/file/path.json`.
 
 ## Usage
-In order to make use of this, you'll first need to add this gem to your `Gemfile`:
+This library is distributed as a Ruby gem, and we recommend adding it to your Gemfile:
 
 ```ruby
-gem 'file-storage', git: 'git@github.com:gocardless/file-storage.git'
+gem "file-storage"
 ```
 
 Some attributes can be configured via `FileStorage.configure`. If using Rails, you want to
@@ -31,6 +31,8 @@ the *Adapters* section for more details):
 ```ruby
 config.before { FileStorage::InMemory.reset! }
 ```
+
+For our policy on compatibility with Ruby versions, see [COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Design and Architecture
 The main principle behind `FileStorage` is that each resource or group of resources must
@@ -153,3 +155,10 @@ FileStorage.for("inmemory://bucket/path/").list
 FileStorage.for("inmemory://bucket/path/file.xml").delete!
 => true
 ```
+
+## License & Contributing
+
+* FileStorage is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+* Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/file-storage.
+
+GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/careers/).

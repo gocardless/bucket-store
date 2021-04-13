@@ -6,13 +6,17 @@ Gem::Specification.new do |s|
   s.name        = "file_storage"
   s.version     = FileStorage::VERSION.dup
   s.authors     = ["GoCardless Engineering"]
-  s.email       = ["developers@gocardless.com"]
+  s.email       = ["engineering@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
   s.description = <<-DESCRIPTION
     A helper library to access cloud storage services such as Google Cloud Storage.
   DESCRIPTION
+  s.homepage      = "https://github.com/gocardless/file-storage"
+  s.license       = "MIT"
 
   s.files = Dir["lib/**/*", "README.md"]
+
+  s.required_ruby_version = ">= 2.6"
 
   s.add_dependency "google-cloud-storage", "~> 1.31"
 
