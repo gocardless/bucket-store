@@ -156,6 +156,25 @@ module BucketStore
       list.first == "#{adapter_type}://#{bucket}/#{key}"
     end
 
+    # Generates a pre-signed URL for the referenced key.
+    #
+    # @param [Integer] expiry The time to expiry for the URL; defaults to 24 hours.
+    # @return [String] The pre-signed URL
+    #
+    # @example Generate a presigned URL for a file
+    #   BucketStore.for("gcs://bucket/file.txt").presigned_url
+    def presigned_url(expiry: 86400)
+      BucketStore.logger.info(event: "key_storage.presigned_url_started")
+
+      start = BucketStore::Timing.monotonic_now
+      url = adapter.presigned_url(bucket: bucket, key: key, expiry: expiry)
+
+      BucketStore.logger.info(event: "key_storage.presigned_url_finished",
+                              duration: BucketStore::Timing.monotonic_now - start)
+
+      url
+    end
+
     private
 
     attr_reader :adapter

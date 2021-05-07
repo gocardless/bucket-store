@@ -55,6 +55,12 @@ module BucketStore
       true
     end
 
+    # rubocop: disable Lint/UnusedMethodArgument
+    def presigned_url(bucket:, key:, expiry:)
+      "file://#{key_path(bucket, key)}"
+    end
+    # rubocop: enable Lint/UnusedMethodArgument
+
     private
 
     attr_reader :base_dir

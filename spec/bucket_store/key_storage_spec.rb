@@ -154,4 +154,12 @@ RSpec.describe BucketStore::KeyStorage do
       expect(build_for("inmemory://bucket/prefix/a").exists?).to be false
     end
   end
+
+  describe "#presigned_url" do
+    let(:url) { "inmemory://bucket/file1" }
+
+    it "returns a URL" do
+      expect(build_for(url).presigned_url).to eq(url)
+    end
+  end
 end

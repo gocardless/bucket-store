@@ -58,5 +58,11 @@ module BucketStore
 
       true
     end
+
+    # rubocop: disable Lint/UnusedMethodArgument
+    def presigned_url(bucket:, key:, expiry:)
+      "inmemory://#{bucket}/#{key}"
+    end
+    # rubocop: enable Lint/UnusedMethodArgument
   end
 end
