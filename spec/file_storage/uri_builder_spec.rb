@@ -15,14 +15,14 @@ RSpec.describe FileStorage::UriBuilder do
     end
 
     context "when the input contains characters we cannot process" do
-      let(:input) { "everything is {not} good <enough>" }
+      let(:input) { "everything is {not} go%od <enough>" }
 
-      it { is_expected.to(eq("everything is __not__ good __enough__")) }
+      it { is_expected.to(eq("everything is __not__ go__od __enough__")) }
 
       context "and we have specified a different replacement" do
         subject { described_class.sanitize(input, "!!") }
 
-        it { is_expected.to(eq("everything is !!not!! good !!enough!!")) }
+        it { is_expected.to(eq("everything is !!not!! go!!od !!enough!!")) }
       end
     end
   end

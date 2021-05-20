@@ -9,7 +9,7 @@ module FileStorage
     # @param [String] replacement the replacement string for invalid characters
     # @return [String] the sanitised string
     def self.sanitize(input, replacement = "__")
-      input.gsub(/[{}<>]/, replacement)
+      input.gsub(/[{}<>%]/, replacement)
     end
   end
 end
