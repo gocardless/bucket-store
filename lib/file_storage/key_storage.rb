@@ -81,27 +81,44 @@ module FileStorage
 
     # Lists all keys for the current adapter that have the reference key as prefix
     #
-    # This will return a list of valid keys in the format of `adapter://bucket/key`. The keys in
-    # the list will share the reference key as a prefix.
+    # Internally, this method will paginate through the result set. The default page size
+    # for the underlying adapter can be controlled via the `page_size` argument.
     #
-    # @return [Array<String>] A list of keys in the format of `adapter://bucket/key`
+    # This will return a enumerator of valid keys in the format of `adapter://bucket/key`.
+    # The keys in the list will share the reference key as a prefix. Underlying adapters will
+    # paginate the result set as the enumerable is consumed. The number of items per page
+    # can be controlled by the `page_size` argument.
     #
-    # @example List all files under a given prefix
-    #   FileStorage.for("inmemory://bucket/prefix").list
-    def list
+    # @param [Integer] page_size
+    #   the max number of items to fetch for each page of results
+    def list(page_size: 1000)
       FileStorage.logger.info(event: "key_storage.list_started")
 
       start = FileStorage::Timing.monotonic_now
-      result = adapter.list(
+      pages = adapter.list(
         bucket: bucket,
         key: key,
+        page_size: page_size,
       )
 
-      FileStorage.logger.info(resource_count: result[:keys].count,
-                              event: "key_storage.list_finished",
-                              duration: FileStorage::Timing.monotonic_now - start)
+      page_count = 0
+      Enumerator.new do |yielder|
+        pages.each do |page|
+          page_count += 1
+          keys = page.fetch(:keys, []).map { |key| "#{adapter_type}://#{page[:bucket]}/#{key}" }
 
-      result[:keys].map { |key| "#{adapter_type}://#{result[:bucket]}/#{key}" }
+          FileStorage.logger.info(
+            event: "key_storage.list_page_fetched",
+            resource_count: keys.count,
+            page: page_count,
+            duration: FileStorage::Timing.monotonic_now - start,
+          )
+
+          keys.each do |key|
+            yielder.yield(key)
+          end
+        end
+      end
     end
 
     # Deletes the referenced key.

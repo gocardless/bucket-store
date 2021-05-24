@@ -55,11 +55,8 @@ RSpec.describe FileStorage::InMemory do
       end
 
       context "but we try to fetch it from a different bucket" do
-        it "raises an error" do
-          expect(instance.list(bucket: bucket, key: "whatever")).to eq(
-            bucket: bucket,
-            keys: [],
-          )
+        it "returns an empty list" do
+          expect(instance.list(bucket: bucket, key: "whatever", page_size: 1000).to_a).to eq([])
         end
       end
     end
@@ -68,10 +65,7 @@ RSpec.describe FileStorage::InMemory do
   describe "#list" do
     context "when the bucket is empty" do
       it "returns an empty list" do
-        expect(instance.list(bucket: bucket, key: "whatever")).to eq(
-          bucket: bucket,
-          keys: [],
-        )
+        expect(instance.list(bucket: bucket, key: "whatever", page_size: 1000).to_a).to eq([])
       end
     end
 
@@ -86,7 +80,7 @@ RSpec.describe FileStorage::InMemory do
 
       context "and we provide a matching prefix" do
         it "returns only the matching items" do
-          expect(instance.list(bucket: bucket, key: "2019-01")).to match(
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 1000).first).to match(
             bucket: bucket,
             keys: match_array(%w[2019-01/hello1 2019-01/hello2 2019-01/hello3]),
           )
@@ -95,10 +89,30 @@ RSpec.describe FileStorage::InMemory do
 
       context "when the prefix doesn't match anything" do
         it "returns an empty list" do
-          expect(instance.list(bucket: bucket, key: "YOLO")).to match(
+          expect(instance.list(bucket: bucket, key: "YOLO", page_size: 1000).to_a).to eq([])
+        end
+      end
+
+      context "and we request fewer keys than they are available" do
+        it "returns a subset of the matching keys" do
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 2).first).to match(
             bucket: bucket,
-            keys: [],
+            keys: have_attributes(length: 2),
           )
+        end
+      end
+
+      context "when there are multiple pages of results available" do
+        it "returns an enumerable" do
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 1)).
+            to be_a_kind_of(Enumerable)
+        end
+
+        it "enumerates through all the pages" do
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 2).to_a).to match_array([
+            { bucket: bucket, keys: have_attributes(length: 2) },
+            { bucket: bucket, keys: have_attributes(length: 1) },
+          ])
         end
       end
     end

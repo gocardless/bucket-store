@@ -41,12 +41,16 @@ module FileStorage
       }
     end
 
-    def list(bucket:, key:)
-      matching_keys = @buckets[bucket].keys.select { |k| k.start_with?(key) }
-      {
-        bucket: bucket,
-        keys: matching_keys,
-      }
+    def list(bucket:, key:, page_size:)
+      @buckets[bucket].keys.
+        select { |k| k.start_with?(key) }.
+        each_slice(page_size).
+        map do |keys|
+          {
+            bucket: bucket,
+            keys: keys,
+          }
+        end.to_enum
     end
 
     def delete!(bucket:, key:)

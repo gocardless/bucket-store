@@ -46,10 +46,10 @@ RSpec.describe FileStorage::KeyStorage do
           hash_including(event: "key_storage.list_started"),
         )
         expect(FileStorage.logger).to receive(:info).with(
-          hash_including(event: "key_storage.list_finished"),
+          hash_including(event: "key_storage.list_page_fetched"),
         )
 
-        build_for("inmemory://bucket").list
+        build_for("inmemory://bucket").list.to_a
       end
 
       context "but the URI does not have a trailing /" do
