@@ -150,6 +150,15 @@ FileStorage.for("inmemory://bucket/path/").list
 => ["inmemory://bucket/path/file.xml"]
 ```
 
+### Moving a file
+
+_Note: Moving a file is only supported between the same adapter type_
+
+```ruby
+FileStorage.for("inmemory://bucket/path/file.xml").move!("inmemory://bucket/path/file2.xml")
+=> "inmemory://bucket/path/file2.xml"
+```
+
 ### Delete a file
 ```ruby
 FileStorage.for("inmemory://bucket/path/file.xml").delete!

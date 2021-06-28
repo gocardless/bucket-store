@@ -121,6 +121,43 @@ module FileStorage
       end
     end
 
+    # Moves the existing file to a new file path
+    #
+    # @param [String] new_key The new key to move the file to
+    # @return [String] A URI to the file's new path
+    # @example Move a file
+    #   FileStorage.for("inmemory://bucket1/foo").move!("inmemory://bucket2/bar")
+    def move!(new_key)
+      raise ArgumentError, "Key cannot be empty" if key.empty?
+
+      new_key_ctx = FileStorage.for(new_key)
+
+      unless new_key_ctx.adapter_type == adapter_type
+        raise ArgumentError, "Adapter type must be the same"
+      end
+      raise ArgumentError, "Destination key cannot be empty" if new_key_ctx.key.empty?
+
+      start = FileStorage::Timing.monotonic_now
+      result = adapter.move!(
+        bucket: bucket,
+        key: key,
+        new_bucket: new_key_ctx.bucket,
+        new_key: new_key_ctx.key,
+      )
+
+      old_key = "#{adapter_type}://#{bucket}/#{key}"
+      new_key = "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
+
+      FileStorage.logger.info(
+        event: "key_storage.moved",
+        duration: FileStorage::Timing.monotonic_now - start,
+        old_key: old_key,
+        new_key: new_key,
+      )
+
+      new_key
+    end
+
     # Deletes the referenced key.
     #
     # Note that this method will always return true.

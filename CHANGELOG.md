@@ -1,3 +1,8 @@
+v0.3.0
+------
+
+- Add `move!` to move files
+
 v0.2.0
 ------
 

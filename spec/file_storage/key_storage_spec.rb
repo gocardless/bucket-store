@@ -117,6 +117,33 @@ RSpec.describe FileStorage::KeyStorage do
     end
   end
 
+  describe "#move!" do
+    subject(:move) { build_for(old_key).move!(new_key) }
+
+    let(:old_key) { "inmemory://bucket/file1" }
+    let(:new_key) { "inmemory://bucket2/file2" }
+
+    before { build_for(old_key).upload!("hello") }
+
+    it "returns the new path's uri" do
+      expect(move).to eq(new_key)
+    end
+
+    it "moves the file" do
+      move
+
+      expect(build_for(new_key).download[:content]).to eq("hello")
+    end
+
+    context "with a different adapter" do
+      let(:new_key) { "disk://bucket2/file2" }
+
+      it "raises an error" do
+        expect { move }.to raise_error(ArgumentError, /Adapter type/)
+      end
+    end
+  end
+
   describe "delete!" do
     before do
       build_for("inmemory://bucket/file1").upload!("content1")
