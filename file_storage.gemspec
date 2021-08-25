@@ -20,11 +20,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency "google-cloud-storage", "~> 1.31"
 
-  s.add_development_dependency "gc_ruboconfig", "~> 2.25"
+  s.add_development_dependency "gc_ruboconfig", "~> 2.28"
   s.add_development_dependency "pry-byebug", "~> 3.9"
   s.add_development_dependency "rspec", "~> 3.10"
   s.add_development_dependency "rspec_junit_formatter", "~> 0.4.1"
-  s.add_development_dependency "rubocop", "~> 1.12"
-  s.add_development_dependency "rubocop-performance", "~> 1.10"
-  s.add_development_dependency "rubocop-rspec", "~> 2.2"
+  s.add_development_dependency "rubocop", "~> 1.19"
+  s.add_development_dependency "rubocop-performance", "~> 1.11"
+  s.add_development_dependency "rubocop-rspec", "~> 2.4"
 end

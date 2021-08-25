@@ -30,6 +30,9 @@ RSpec/LetSetup:
 RSpec/MultipleExpectations:
   Max: 10
 
+RSpec/Rails/AvoidSetupHook:
+  Enabled: true
+
 # Disabled as it's breaking dependabot 
 Gemspec/RequiredRubyVersion:
   Exclude:
