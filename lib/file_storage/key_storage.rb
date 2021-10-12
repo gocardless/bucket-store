@@ -3,12 +3,14 @@
 require "file_storage/timing"
 require "file_storage/in_memory"
 require "file_storage/gcs"
+require "file_storage/s3"
 require "file_storage/disk"
 
 module FileStorage
   class KeyStorage
     SUPPORTED_ADAPTERS = {
       gs: Gcs,
+      s3: S3,
       inmemory: InMemory,
       disk: Disk,
     }.freeze

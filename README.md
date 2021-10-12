@@ -70,24 +70,27 @@ necessary this should be called at startup time before any other method is invok
 
 ## Adapters
 
-`FileStorage` comes with 3 built-in adapters:
+`FileStorage` comes with 4 built-in adapters:
 
 - `gs`: the Google Cloud Storage adapter
+- `s3`: the S3 adapter
 - `disk`: a disk-based adapter
 - `inmemory`: an in-memory store
 
 ### GS adapter
-This is the Google Cloud Storage adapter and what you'll most likely want to use in
-production. `FileStorage` assumes that the authorisation for accessing the resources
-has been set up outside of the gem.
+This is the adapter for Google Cloud Storage. `FileStorage` assumes that the  authorisation
+for accessing the resources has been set up outside of the gem.
 
+### S3 adapter
+This is the adapter for S3. `FileStorage` assumes that the authorisation for accessing
+the resources has been set up outside of the gem (see also
+https://docs.aws.amazon.com/sdk-for-ruby/v3/api/index.html#Configuration).
 
 ### Disk adapter
 A disk-backed key-value store. This adapter will create a temporary directory where
 all the files will be written into/read from. The base directory can be explicitly
 defined by setting the `DISK_ADAPTER_BASE_DIR` environment variable, otherwise a temporary
 directory will be created.
-
 
 ### In-memory adapter
 An in-memory key-value storage. This works just like the disk adapter, except that
