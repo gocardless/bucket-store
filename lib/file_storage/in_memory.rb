@@ -58,5 +58,13 @@ module FileStorage
 
       true
     end
+
+    def move!(bucket:, key:, new_bucket:, new_key:)
+      @buckets[new_bucket][new_key] = @buckets.fetch(bucket).delete(key)
+      {
+        bucket: new_bucket,
+        key: new_key,
+      }
+    end
   end
 end

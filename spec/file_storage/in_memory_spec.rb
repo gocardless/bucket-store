@@ -118,6 +118,46 @@ RSpec.describe FileStorage::InMemory do
     end
   end
 
+  describe "#move!" do
+    subject(:move) do
+      instance.move!(bucket: bucket, key: key, new_bucket: new_bucket, new_key: new_key)
+    end
+
+    let(:new_bucket) { "cake" }
+
+    context "when the 'existing' file doesn't exist" do
+      let(:key) { "foobar" }
+      let(:new_key) { "barbaz" }
+
+      it "raises a KeyError" do
+        expect { move }.to raise_error(KeyError, /#{bucket}/)
+      end
+    end
+
+    context "when the file does exist" do
+      let(:key) { "2021-02-08/hello1" }
+      let(:new_key) { "2021-02-08/hello2" }
+      let(:content) { "world" }
+
+      before { instance.upload!(bucket: bucket, key: key, content: content) }
+
+      it "moves the file" do
+        move
+
+        expect(instance.download(bucket: new_bucket, key: new_key)[:content]).to eq(content)
+        expect { instance.download(bucket: bucket, key: key)[:content] }.
+          to raise_error(KeyError, /key not found/)
+      end
+
+      it "returns the expected payload" do
+        expect(move).to eq(
+          bucket: new_bucket,
+          key: new_key,
+        )
+      end
+    end
+  end
+
   describe "#reset!" do
     let(:bucket2) { "bucket2" }
 

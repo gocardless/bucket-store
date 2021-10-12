@@ -66,6 +66,18 @@ module FileStorage
       true
     end
 
+    def move!(bucket:, key:, new_bucket:, new_key:)
+      old_file = get_bucket(bucket).file(key)
+      destination_bucket = get_bucket(new_bucket)
+      old_file.copy(destination_bucket.name, new_key)
+      old_file.delete
+
+      {
+        bucket: new_bucket,
+        key: new_key,
+      }
+    end
+
     private
 
     attr_reader :storage

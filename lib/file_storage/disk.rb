@@ -55,6 +55,15 @@ module FileStorage
       true
     end
 
+    def move!(bucket:, key:, new_bucket:, new_key:)
+      FileUtils.mv(key_path(bucket, key), key_path(new_bucket, new_key))
+
+      {
+        bucket: new_bucket,
+        key: new_key,
+      }
+    end
+
     private
 
     attr_reader :base_dir
