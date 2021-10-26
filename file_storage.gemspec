@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 2.6"
 
+  s.add_dependency "aws-sdk-s3", "~> 1"
   s.add_dependency "google-cloud-storage", "~> 1.31"
 
   s.add_development_dependency "gc_ruboconfig", "~> 2.28"
