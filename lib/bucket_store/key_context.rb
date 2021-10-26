@@ -2,7 +2,7 @@
 
 require "uri"
 
-module FileStorage
+module BucketStore
   class KeyContext
     attr_reader :adapter, :bucket, :key
 

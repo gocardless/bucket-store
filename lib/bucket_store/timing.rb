@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module FileStorage
+module BucketStore
   module Timing
     # "Wall clock is for telling time, monotonic clock is for measuring time."
     #

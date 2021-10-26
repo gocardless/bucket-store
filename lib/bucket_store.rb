@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
-require "file_storage/version"
-require "file_storage/configuration"
-require "file_storage/key_context"
-require "file_storage/key_storage"
+require "bucket_store/version"
+require "bucket_store/configuration"
+require "bucket_store/key_context"
+require "bucket_store/key_storage"
 
 # An abstraction layer on the top of file cloud storage systems such as Google Cloud
 # Storage or S3. This module exposes a generic interface that allows interoperability
 # between different storage options. Callers don't need to worry about the specifics
 # of where and how a file is stored and retrieved as long as the given key is valid.
 #
-# Keys within the {FileStorage} are URI strings that can universally locate an object
+# Keys within the {BucketStore} are URI strings that can universally locate an object
 # in the given provider. A valid key example would be:
 # `gs://gcs-bucket/file/path.json`.
-module FileStorage
+module BucketStore
   class << self
     attr_writer :configuration
 
     def configuration
-      @configuration ||= FileStorage::Configuration.new
+      @configuration ||= BucketStore::Configuration.new
     end
 
-    # Yields a {FileStorage::Configuration} object that allows callers to configure
-    # FileStorage's behaviour.
+    # Yields a {BucketStore::Configuration} object that allows callers to configure
+    # BucketStore's behaviour.
     #
-    # @yield [FileStorage::Configuration]
+    # @yield [BucketStore::Configuration]
     #
-    # @example Configure FileStorage to use a different logger than the default
-    #   FileStorage.configure do |config|
+    # @example Configure BucketStore to use a different logger than the default
+    #   BucketStore.configure do |config|
     #     config.logger = Logger.new($stderr)
     #   end
     def configure
@@ -46,8 +46,8 @@ module FileStorage
     #
     # @param [String] key The reference key
     # @return [KeyStorage] An interface to the adapter that can handle requests on the given key
-    # @example Configure {FileStorage} for Google Cloud Storage
-    #   FileStorage.for("gs://the_bucket/a/valid/key")
+    # @example Configure {BucketStore} for Google Cloud Storage
+    #   BucketStore.for("gs://the_bucket/a/valid/key")
     def for(key)
       ctx = KeyContext.parse(key)
 

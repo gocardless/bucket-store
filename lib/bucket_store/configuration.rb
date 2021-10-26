@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module FileStorage
+module BucketStore
   class Configuration
     def logger
       @logger ||= Logger.new($stdout)
@@ -8,7 +8,7 @@ module FileStorage
 
     # Specifies a custom logger.
     #
-    # Note that {FileStorage} uses structured logging, any custom logger passed must also
+    # Note that {BucketStore} uses structured logging, any custom logger passed must also
     # support it.
     #
     # @example Use stderr as main output device

@@ -2,9 +2,9 @@
 
 require "spec_helper"
 
-require "file_storage/in_memory"
+require "bucket_store/in_memory"
 
-RSpec.describe FileStorage::InMemory do
+RSpec.describe BucketStore::InMemory do
   let(:instance) { described_class.new }
 
   let(:bucket) { "bucket" }

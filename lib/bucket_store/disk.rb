@@ -2,7 +2,7 @@
 
 require "fileutils"
 
-module FileStorage
+module BucketStore
   class Disk
     def self.build(base_dir = ENV["DISK_ADAPTER_BASE_DIR"])
       base_dir ||= Dir.tmpdir

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "file_storage"
+require "bucket_store"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -13,9 +13,9 @@ RSpec.configure do |config|
   config.order = "random"
 
   # Silence log output when running tests
-  FileStorage.configuration.logger = Logger.new(nil)
+  BucketStore.configuration.logger = Logger.new(nil)
 
   config.before do
-    FileStorage::InMemory.reset!
+    BucketStore::InMemory.reset!
   end
 end

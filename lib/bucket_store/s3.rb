@@ -4,7 +4,7 @@ require "uri"
 
 require "aws-sdk-s3"
 
-module FileStorage
+module BucketStore
   class S3
     DEFAULT_TIMEOUT_SECONDS = 30
 

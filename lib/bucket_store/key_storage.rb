@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require "file_storage/timing"
-require "file_storage/in_memory"
-require "file_storage/gcs"
-require "file_storage/s3"
-require "file_storage/disk"
+require "bucket_store/timing"
+require "bucket_store/in_memory"
+require "bucket_store/gcs"
+require "bucket_store/s3"
+require "bucket_store/disk"
 
-module FileStorage
+module BucketStore
   class KeyStorage
     SUPPORTED_ADAPTERS = {
       gs: Gcs,
@@ -38,17 +38,17 @@ module FileStorage
     #   the actual download's content)
     #
     # @example Download a key
-    #   FileStorage.for("inmemory://bucket/file.xml").download
+    #   BucketStore.for("inmemory://bucket/file.xml").download
     def download
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
-      FileStorage.logger.info(event: "key_storage.download_started")
+      BucketStore.logger.info(event: "key_storage.download_started")
 
-      start = FileStorage::Timing.monotonic_now
+      start = BucketStore::Timing.monotonic_now
       result = adapter.download(bucket: bucket, key: key)
 
-      FileStorage.logger.info(event: "key_storage.download_finished",
-                              duration: FileStorage::Timing.monotonic_now - start)
+      BucketStore.logger.info(event: "key_storage.download_finished",
+                              duration: BucketStore::Timing.monotonic_now - start)
 
       result
     end
@@ -60,22 +60,22 @@ module FileStorage
     # @param [String] content The content to upload
     # @return [String] The final `key` where the content has been uploaded
     # @example Upload a file
-    #   FileStorage.for("inmemory://bucket/file.xml").upload("hello world")
+    #   BucketStore.for("inmemory://bucket/file.xml").upload("hello world")
     def upload!(content)
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
-      FileStorage.logger.info(event: "key_storage.upload_started",
+      BucketStore.logger.info(event: "key_storage.upload_started",
                               **log_context)
 
-      start = FileStorage::Timing.monotonic_now
+      start = BucketStore::Timing.monotonic_now
       result = adapter.upload!(
         bucket: bucket,
         key: key,
         content: content,
       )
 
-      FileStorage.logger.info(event: "key_storage.upload_finished",
-                              duration: FileStorage::Timing.monotonic_now - start,
+      BucketStore.logger.info(event: "key_storage.upload_finished",
+                              duration: BucketStore::Timing.monotonic_now - start,
                               **log_context)
 
       "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
@@ -94,9 +94,9 @@ module FileStorage
     # @param [Integer] page_size
     #   the max number of items to fetch for each page of results
     def list(page_size: 1000)
-      FileStorage.logger.info(event: "key_storage.list_started")
+      BucketStore.logger.info(event: "key_storage.list_started")
 
-      start = FileStorage::Timing.monotonic_now
+      start = BucketStore::Timing.monotonic_now
       pages = adapter.list(
         bucket: bucket,
         key: key,
@@ -109,11 +109,11 @@ module FileStorage
           page_count += 1
           keys = page.fetch(:keys, []).map { |key| "#{adapter_type}://#{page[:bucket]}/#{key}" }
 
-          FileStorage.logger.info(
+          BucketStore.logger.info(
             event: "key_storage.list_page_fetched",
             resource_count: keys.count,
             page: page_count,
-            duration: FileStorage::Timing.monotonic_now - start,
+            duration: BucketStore::Timing.monotonic_now - start,
           )
 
           keys.each do |key|
@@ -130,15 +130,15 @@ module FileStorage
     # @return [bool]
     #
     # @example Delete a file
-    #   FileStorage.for("inmemory://bucket/file.txt").delete!
+    #   BucketStore.for("inmemory://bucket/file.txt").delete!
     def delete!
-      FileStorage.logger.info(event: "key_storage.delete_started")
+      BucketStore.logger.info(event: "key_storage.delete_started")
 
-      start = FileStorage::Timing.monotonic_now
+      start = BucketStore::Timing.monotonic_now
       adapter.delete!(bucket: bucket, key: key)
 
-      FileStorage.logger.info(event: "key_storage.delete_finished",
-                              duration: FileStorage::Timing.monotonic_now - start)
+      BucketStore.logger.info(event: "key_storage.delete_finished",
+                              duration: BucketStore::Timing.monotonic_now - start)
 
       true
     end
