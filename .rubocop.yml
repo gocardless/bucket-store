@@ -37,3 +37,9 @@ RSpec/Rails/AvoidSetupHook:
 Gemspec/RequiredRubyVersion:
   Exclude:
     - 'file_storage.gemspec'
+
+# Disabled as it's breaking rubocop, see:
+# https://github.com/rubocop/rubocop/issues/10208
+# https://github.com/rubocop/rubocop/issues/10210
+Layout/DotPosition:
+  Enabled: false
