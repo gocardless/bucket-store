@@ -2,12 +2,12 @@
 
 require "spec_helper"
 
-require "file_storage/key_context"
-require "file_storage/key_storage"
+require "bucket_store/key_context"
+require "bucket_store/key_storage"
 
-RSpec.describe FileStorage::KeyStorage do
+RSpec.describe BucketStore::KeyStorage do
   def build_for(key)
-    ctx = FileStorage::KeyContext.parse(key)
+    ctx = BucketStore::KeyContext.parse(key)
 
     described_class.new(adapter: ctx.adapter,
                         bucket: ctx.bucket,
@@ -42,10 +42,10 @@ RSpec.describe FileStorage::KeyStorage do
       end
 
       it "logs the operation" do
-        expect(FileStorage.logger).to receive(:info).with(
+        expect(BucketStore.logger).to receive(:info).with(
           hash_including(event: "key_storage.list_started"),
         )
-        expect(FileStorage.logger).to receive(:info).with(
+        expect(BucketStore.logger).to receive(:info).with(
           hash_including(event: "key_storage.list_page_fetched"),
         )
 
@@ -74,10 +74,10 @@ RSpec.describe FileStorage::KeyStorage do
     end
 
     it "logs the operation" do
-      expect(FileStorage.logger).to receive(:info).with(
+      expect(BucketStore.logger).to receive(:info).with(
         hash_including(event: "key_storage.download_started"),
       )
-      expect(FileStorage.logger).to receive(:info).with(
+      expect(BucketStore.logger).to receive(:info).with(
         hash_including(event: "key_storage.download_finished"),
       )
 
@@ -99,10 +99,10 @@ RSpec.describe FileStorage::KeyStorage do
     end
 
     it "logs the operation" do
-      expect(FileStorage.logger).to receive(:info).with(
+      expect(BucketStore.logger).to receive(:info).with(
         hash_including(event: "key_storage.upload_started"),
       )
-      expect(FileStorage.logger).to receive(:info).with(
+      expect(BucketStore.logger).to receive(:info).with(
         hash_including(event: "key_storage.upload_finished"),
       )
 

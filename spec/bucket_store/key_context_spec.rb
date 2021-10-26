@@ -2,9 +2,9 @@
 
 require "spec_helper"
 
-require "file_storage/key_context"
+require "bucket_store/key_context"
 
-RSpec.describe FileStorage::KeyContext do
+RSpec.describe BucketStore::KeyContext do
   describe ".parse" do
     context "when given an invalid key" do
       let(:key) { "invalid" }

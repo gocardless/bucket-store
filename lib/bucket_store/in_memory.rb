@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module FileStorage
+module BucketStore
   class InMemory
     def self.build
       InMemory.instance

@@ -13,13 +13,13 @@ references:
 
   cache_bundle: &cache_bundle
     save_cache:
-      key: bundle-<< parameters.ruby_version >>-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
+      key: bundle-<< parameters.ruby_version >>-{{ checksum "bucket_store.gemspec" }}-{{ checksum "Gemfile" }}
       paths:
         - vendor/bundle
 
   restore_bundle: &restore_bundle
     restore_cache:
-      key: bundle-<< parameters.ruby_version >>-{{ checksum "file_storage.gemspec" }}-{{ checksum "Gemfile" }}
+      key: bundle-<< parameters.ruby_version >>-{{ checksum "bucket_store.gemspec" }}-{{ checksum "Gemfile" }}
 
 jobs:
   code_quality:

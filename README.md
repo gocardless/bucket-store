@@ -1,11 +1,11 @@
-# FileStorage
+# BucketStore
 
 An abstraction layer on the top of file cloud storage systems such as Google Cloud
 Storage or S3. This module exposes a generic interface that allows interoperability
 between different storage options. Callers don't need to worry about the specifics
 of where and how a file is stored and retrieved as long as the given key is valid.
 
-Keys within the `FileStorage` are URI strings that can universally locate an object
+Keys within the `BucketStorage` are URI strings that can universally locate an object
 in the given provider. A valid key example would be
 `gs://a-gcs-bucket/file/path.json`.
 
@@ -13,14 +13,14 @@ in the given provider. A valid key example would be
 This library is distributed as a Ruby gem, and we recommend adding it to your Gemfile:
 
 ```ruby
-gem "file-storage"
+gem "bucket-store"
 ```
 
-Some attributes can be configured via `FileStorage.configure`. If using Rails, you want to
-add a new initializer for `FileStorage`. Example:
+Some attributes can be configured via `BucketStore.configure`. If using Rails, you want to
+add a new initializer for `BucketStore`. Example:
 
 ```ruby
-FileStorage.configure do |config|
+BucketStore.configure do |config|
   config.logger = Logger.new($stderr)
 end
 ```
@@ -29,13 +29,13 @@ If using RSpec, you'll probably want to add this line to RSpec's config block (s
 the *Adapters* section for more details):
 
 ```ruby
-config.before { FileStorage::InMemory.reset! }
+config.before { BucketStore::InMemory.reset! }
 ```
 
 For our policy on compatibility with Ruby versions, see [COMPATIBILITY.md](docs/COMPATIBILITY.md).
 
 ## Design and Architecture
-The main principle behind `FileStorage` is that each resource or group of resources must
+The main principle behind `BucketStore` is that each resource or group of resources must
 be unequivocally identifiable by a URI. The URI is always composed of three parts:
 
 - the "adapter" used to fetch the resource (see "adapters" below)
@@ -48,14 +48,14 @@ As an example, all the following are valid URIs:
 - `inmemory://bucket/separator/file.xml`
 - `disk://hello/path/to/file.json`
 
-Even though `FileStorage`'s main goal is to be an abstraction layer on top of systems such
+Even though `BucketStore`'s main goal is to be an abstraction layer on top of systems such
 as S3 or Google Cloud Storage where the "path" to a resource is in practice a unique
 identifier as a whole (i.e. the `/` is not a directory separator but rather part of the
 key's name), we assume that clients will actually want some sort of hierarchical
 separation of resources and assume that such separation is achieved by defining each
 part of the hierarchy via `/`.
 
-This means that the following are also valid URIs in `FileStorage` but they refer to
+This means that the following are also valid URIs in `BucketStore` but they refer to
 all the resources under that specific hierarchy:
 
 - `gs://gcs-bucket/path/subpath/`
@@ -63,14 +63,14 @@ all the resources under that specific hierarchy:
 - `disk://hello/path`
 
 ## Configuration
-`FileStorage` exposes some configurable attributes via `FileStorage.configure`. If
+`BucketStore` exposes some configurable attributes via `BucketStore.configure`. If
 necessary this should be called at startup time before any other method is invoked.
 
 - `logger`: custom logger class. By default, logs will be sent to stdout.
 
 ## Adapters
 
-`FileStorage` comes with 4 built-in adapters:
+`BucketStore` comes with 4 built-in adapters:
 
 - `gs`: the Google Cloud Storage adapter
 - `s3`: the S3 adapter
@@ -78,11 +78,11 @@ necessary this should be called at startup time before any other method is invok
 - `inmemory`: an in-memory store
 
 ### GS adapter
-This is the adapter for Google Cloud Storage. `FileStorage` assumes that the  authorisation
+This is the adapter for Google Cloud Storage. `BucketStore` assumes that the  authorisation
 for accessing the resources has been set up outside of the gem.
 
 ### S3 adapter
-This is the adapter for S3. `FileStorage` assumes that the authorisation for accessing
+This is the adapter for S3. `BucketStore` assumes that the authorisation for accessing
 the resources has been set up outside of the gem (see also
 https://docs.aws.amazon.com/sdk-for-ruby/v3/api/index.html#Configuration).
 
@@ -103,33 +103,33 @@ content though via a `.reset!` method. In RSpec this would translate to adding t
 in the `spec_helper`:
 
 ```ruby
-config.before { FileStorage::InMemory.reset! }
+config.before { BucketStore::InMemory.reset! }
 ```
 
-## FileStorage vs ActiveStorage
+## BucketStore vs ActiveStorage
 
 ActiveStorage is a common framework to access cloud storage systems that is included in
-the ActiveSupport library. In general, ActiveStorage provides a lot more than FileStorage
+the ActiveSupport library. In general, ActiveStorage provides a lot more than BucketStore
 does (including many more adapters) however the two libraries have different use cases
 in mind:
 
 - ActiveStorage requires you to define every possible bucket you're planning to use
   ahead of time in a YAML file. This works well for most cases, however if you plan to
-  use a lot of buckets this soon becomes impractical. We think that FileStorage approach
+  use a lot of buckets this soon becomes impractical. We think that BucketStore approach
   works much better in this case.
-- FileStorage does not provide ways to manipulate the content whereas ActiveStorage does.
+- BucketStore does not provide ways to manipulate the content whereas ActiveStorage does.
   If you plan to apply transformations to the content before uploading or after
   downloading them, then probably ActiveStorage is the library for you. With that said,
-  it's still possible to do these transformations outside of FileStorage and in fact we've
+  it's still possible to do these transformations outside of BucketStore and in fact we've
   found the explicitness of this approach a desirable property.
-- FileStorage approach makes any resource on a cloud storage system uniquely identifiable
+- BucketStore approach makes any resource on a cloud storage system uniquely identifiable
   via a single URI, which means normally it's enough to pass that string around different
   systems to be able to access the resource without ambiguity. As the URI also includes
   the adapter, it's possible for example to download a `disk://dir/input_file` and
   upload it to a `gs://bucket/output_file` all going through a single interface.
   ActiveStorage is instead focused on persisting an equivalent reference on a Rails model.
   If your application does not use Rails, or does not need to persist the reference or
-  just requires more flexibility in general, then FileStorage is probably the library for
+  just requires more flexibility in general, then BucketStore is probably the library for
   you.
 
 
@@ -137,31 +137,31 @@ in mind:
 
 ### Uploading a file to a bucket
 ```ruby
-FileStorage.for("inmemory://bucket/path/file.xml").upload!("hello world")
+BucketStore.for("inmemory://bucket/path/file.xml").upload!("hello world")
 => "inmemory://bucket/path/file.xml"
 ```
 
 ### Accessing a file in a bucket
 ```ruby
-FileStorage.for("inmemory://bucket/path/file.xml").download
+BucketStore.for("inmemory://bucket/path/file.xml").download
 => {:bucket=>"bucket", :key=>"path/file.xml", :content=>"hello world"}
 ```
 
 ### Listing all keys under a prefix
 ```ruby
-FileStorage.for("inmemory://bucket/path/").list
+BucketStore.for("inmemory://bucket/path/").list
 => ["inmemory://bucket/path/file.xml"]
 ```
 
 ### Delete a file
 ```ruby
-FileStorage.for("inmemory://bucket/path/file.xml").delete!
+BucketStore.for("inmemory://bucket/path/file.xml").delete!
 => true
 ```
 
 ## License & Contributing
 
-* FileStorage is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+* BucketStore is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 * Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/file-storage.
 
 GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/careers/).

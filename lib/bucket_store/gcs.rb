@@ -5,7 +5,7 @@ require "uri"
 
 require "google/cloud/storage"
 
-module FileStorage
+module BucketStore
   class Gcs
     DEFAULT_TIMEOUT_SECONDS = 30
 

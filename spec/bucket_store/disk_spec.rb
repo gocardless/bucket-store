@@ -2,9 +2,9 @@
 
 require "spec_helper"
 
-require "file_storage/disk"
+require "bucket_store/disk"
 
-RSpec.describe FileStorage::Disk do
+RSpec.describe BucketStore::Disk do
   subject(:instance) { described_class.new(base_dir) }
 
   let(:bucket) { "bucket" }

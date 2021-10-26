@@ -2,9 +2,9 @@
 
 require "spec_helper"
 
-require "file_storage/uri_builder"
+require "bucket_store/uri_builder"
 
-RSpec.describe FileStorage::UriBuilder do
+RSpec.describe BucketStore::UriBuilder do
   describe "#sanitize" do
     subject { described_class.sanitize(input) }
 

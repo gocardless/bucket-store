@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-RSpec.describe FileStorage do
+RSpec.describe BucketStore do
   describe "#for" do
     context "when given an invalid adapter" do
       let(:key) { "invalid://bucket/path" }
@@ -28,7 +28,7 @@ RSpec.describe FileStorage do
 
       context "and is the google cloud storage adapter" do
         before do
-          allow(FileStorage::Gcs).to receive(:build).and_return(double)
+          allow(BucketStore::Gcs).to receive(:build).and_return(double)
         end
 
         let(:key) { "gs://bucket/path/to/thing" }

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require File.expand_path("lib/file_storage/version", __dir__)
+require File.expand_path("lib/bucket_store/version", __dir__)
 
 Gem::Specification.new do |s|
-  s.name        = "file_storage"
-  s.version     = FileStorage::VERSION.dup
+  s.name        = "bucket_store"
+  s.version     = BucketStore::VERSION.dup
   s.authors     = ["GoCardless Engineering"]
   s.email       = ["engineering@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
