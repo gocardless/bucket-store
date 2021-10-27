@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = <<-DESCRIPTION
     A helper library to access cloud storage services such as Google Cloud Storage.
   DESCRIPTION
-  s.homepage      = "https://github.com/gocardless/file-storage"
+  s.homepage      = "https://github.com/gocardless/bucket-store"
   s.license       = "MIT"
 
   s.files = Dir["lib/**/*", "README.md"]
