@@ -162,6 +162,6 @@ BucketStore.for("inmemory://bucket/path/file.xml").delete!
 ## License & Contributing
 
 * BucketStore is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-* Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/file-storage.
+* Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/bucket-store.
 
 GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/careers/).
