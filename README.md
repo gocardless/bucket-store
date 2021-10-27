@@ -13,7 +13,7 @@ in the given provider. A valid key example would be
 This library is distributed as a Ruby gem, and we recommend adding it to your Gemfile:
 
 ```ruby
-gem "bucket-store"
+gem "bucket_store"
 ```
 
 Some attributes can be configured via `BucketStore.configure`. If using Rails, you want to
