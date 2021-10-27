@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["engineering@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
   s.description = <<-DESCRIPTION
-    A helper library to access cloud storage services such as Google Cloud Storage.
+    A helper library to access cloud storage services such as Google Cloud Storage or S3.
   DESCRIPTION
   s.homepage      = "https://github.com/gocardless/bucket-store"
   s.license       = "MIT"
