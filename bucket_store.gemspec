@@ -9,17 +9,17 @@ Gem::Specification.new do |s|
   s.email       = ["engineering@gocardless.com"]
   s.summary     = "A helper library to access cloud storage services"
   s.description = <<-DESCRIPTION
-    A helper library to access cloud storage services such as Google Cloud Storage.
+    A helper library to access cloud storage services such as Google Cloud Storage or S3.
   DESCRIPTION
-  s.homepage      = "https://github.com/gocardless/file-storage"
+  s.homepage      = "https://github.com/gocardless/bucket-store"
   s.license       = "MIT"
 
   s.files = Dir["lib/**/*", "README.md"]
 
   s.required_ruby_version = ">= 2.6"
 
-  s.add_dependency "aws-sdk-s3", "~> 1"
-  s.add_dependency "google-cloud-storage", "~> 1.31"
+  s.add_dependency "aws-sdk-s3", ">= 1.104"
+  s.add_dependency "google-cloud-storage", ">= 1.34"
 
   s.add_development_dependency "gc_ruboconfig", "~> 2.29"
   s.add_development_dependency "pry-byebug", "~> 3.9"
