@@ -143,6 +143,19 @@ module BucketStore
       true
     end
 
+    # Checks if the given key exists.
+    #
+    # This will only return true when the `key` exactly matches an object within the bucket
+    # and conversely it will return false when `key` matches an internal path to an object.
+    # For example if the bucket has a key named `prefix/file.txt`, it will only return
+    # `true` when `exists?` is called on `prefix/file.txt`. Any other combination
+    # (`prefix/`, `prefix/file`) will instead return `false`.
+    #
+    # @return [bool] `true` if the given key exists, `false` if not
+    def exists?
+      list.first == "#{adapter_type}://#{bucket}/#{key}"
+    end
+
     private
 
     attr_reader :adapter
