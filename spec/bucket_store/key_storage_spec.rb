@@ -117,13 +117,41 @@ RSpec.describe BucketStore::KeyStorage do
     end
   end
 
-  describe "delete!" do
+  describe "#delete!" do
     before do
       build_for("inmemory://bucket/file1").upload!("content1")
     end
 
     it "deletes the given file" do
       expect(build_for("inmemory://bucket/file1").delete!).to eq(true)
+    end
+  end
+
+  describe "#exists?" do
+    before do
+      build_for("inmemory://bucket/file").upload!("content1")
+      build_for("inmemory://bucket/prefix/another_file").upload!("content2")
+    end
+
+    it "returns false when a key does not exist" do
+      expect(build_for("inmemory://bucket/invalid").exists?).to be false
+      expect(build_for("inmemory://invalid_bucket/file").exists?).to be false
+    end
+
+    it "returns true when a key exists" do
+      expect(build_for("inmemory://bucket/file").exists?).to be true
+      expect(build_for("inmemory://bucket/prefix/another_file").exists?).to be true
+    end
+
+    it "returns false when a key matches a path" do
+      expect(build_for("inmemory://bucket").exists?).to be false
+      expect(build_for("inmemory://bucket/").exists?).to be false
+      expect(build_for("inmemory://bucket/prefix/").exists?).to be false
+    end
+
+    it "returns false when a key only partially matches a file name" do
+      expect(build_for("inmemory://bucket/f").exists?).to be false
+      expect(build_for("inmemory://bucket/prefix/a").exists?).to be false
     end
   end
 end
