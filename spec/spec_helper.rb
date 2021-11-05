@@ -12,6 +12,14 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  if config.filter_manager.exclusions.rules.empty?
+    # Do not run integration tests unless an explicit `--tag` is set. This means
+    # that running `bundle exec rspec` will only run the unit tests, which is the
+    # generally preferred behaviour since integration tests require additional
+    # setup to run.
+    config.filter_run_excluding :integration
+  end
+
   # Silence log output when running tests
   BucketStore.configuration.logger = Logger.new(nil)
 
