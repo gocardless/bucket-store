@@ -159,6 +159,15 @@ BucketStore.for("inmemory://bucket/path/file.xml").delete!
 => true
 ```
 
+## Development
+
+### Running tests
+BucketStore comes with both unit and integration tests. While unit tests can be run by simply
+executing `bundle exec rspec`, integration tests require running minio locally. We provide an
+helper script (`scripts/run-minio.sh`) that spins up a pre-configured docker container with
+a single test bucket. Once minio has started, integration tests can be executed with
+`bundle exec rspec --tag integration`.
+
 ## License & Contributing
 
 * BucketStore is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
