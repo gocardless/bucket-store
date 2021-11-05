@@ -54,6 +54,29 @@ jobs:
           name: Run specs
           command: bundle exec rspec
 
+  integration:
+    parameters:
+      ruby_version:
+        type: string
+    docker:
+      - image: circleci/ruby:<< parameters.ruby_version >>
+      - image: quay.io/minio/minio
+        environment:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_REGION_NAME: us-east-1
+        entrypoint: /bin/bash
+        command: -c "mkdir -p /data/bucket && minio server /data --console-address \":9001\""
+    steps:
+      - add_ssh_keys
+      - checkout
+      - *restore_bundle
+      - *bundle_install
+      - *cache_bundle
+      - run:
+          name: Run specs
+          command: bundle exec rspec --tag integration
+
 workflows:
   version: 2
   tests:
@@ -63,6 +86,10 @@ workflows:
             parameters:
               ruby_version: ["3.0"]
       - rspec:
+          matrix:
+            parameters:
+              ruby_version: ["2.6", "2.7", "3.0"]
+      - integration:
           matrix:
             parameters:
               ruby_version: ["2.6", "2.7", "3.0"]

@@ -25,10 +25,10 @@ RSpec.describe BucketStore, :integration do
     # makes things very complicated with no huge benefits.
 
     it "has a consistent interface" do
-      # Write 2001 files
+      # Write 201 files
       file_list = []
-      2001.times do |i|
-        filename = "file#{(i + 1).to_s.rjust(4, '0')}.txt"
+      201.times do |i|
+        filename = "file#{(i + 1).to_s.rjust(3, '0')}.txt"
         file_list << filename
 
         # the body of the file is the filename itself
@@ -36,9 +36,9 @@ RSpec.describe BucketStore, :integration do
       end
 
       # List with prefix should only return the matching files
-      expect(described_class.for("#{base_bucket_uri}/prefix/file1").list.to_a.size).to eq(1000)
+      expect(described_class.for("#{base_bucket_uri}/prefix/file1").list.to_a.size).to eq(100)
       expect(described_class.for("#{base_bucket_uri}/prefix/file2").list.to_a.size).to eq(2)
-      expect(described_class.for("#{base_bucket_uri}/prefix/").list.to_a.size).to eq(2001)
+      expect(described_class.for("#{base_bucket_uri}/prefix/").list.to_a.size).to eq(201)
 
       # List (without prefixes) should return everything
       expect(described_class.for(base_bucket_uri.to_s).list.to_a).
