@@ -1,3 +1,7 @@
+v0.5.0
+------
+- Add `presigned_url` method.
+
 v0.4.0
 ------
 - Add an `.exists?` method that returns `true`/`false` depending on whether a given

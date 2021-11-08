@@ -66,6 +66,10 @@ module BucketStore
       true
     end
 
+    def presigned_url(bucket:, key:, expiry:)
+      get_bucket(bucket).file(key).signed_url(expires: expiry)
+    end
+
     private
 
     attr_reader :storage
