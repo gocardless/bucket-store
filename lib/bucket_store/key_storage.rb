@@ -153,7 +153,7 @@ module BucketStore
     #
     # @return [bool] `true` if the given key exists, `false` if not
     def exists?
-      list.first == "#{adapter_type}://#{bucket}/#{key}"
+      list(page_size: 1).first == "#{adapter_type}://#{bucket}/#{key}"
     end
 
     private

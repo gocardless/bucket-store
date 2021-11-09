@@ -1,6 +1,7 @@
 v0.5.0
 ------
 - Support escaping of URI keys. Fixes #46.
+- Slightly improve the performance of `.exists`
 
 v0.4.0
 ------
