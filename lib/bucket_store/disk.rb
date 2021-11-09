@@ -78,7 +78,7 @@ module BucketStore
     end
 
     def sanitize_filename(filename)
-      filename.gsub(%r{[^0-9A-z.\-/]}, "_")
+      filename.gsub(%r{[^0-9A-z.\- /]}, "_")
     end
   end
 end

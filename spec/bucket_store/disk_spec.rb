@@ -55,6 +55,17 @@ RSpec.describe BucketStore::Disk do
         )
       end
     end
+
+    context "when given a key with invalid chars" do
+      it "sanitizes the filename" do
+        instance.upload!(bucket: bucket, key: "this is % invalid", content: "%%%%")
+
+        expect(instance.list(bucket: bucket, key: "", page_size: 1000).first).to match(
+          bucket: bucket,
+          keys: ["this is _ invalid"],
+        )
+      end
+    end
   end
 
   describe "#download" do
