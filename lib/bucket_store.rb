@@ -41,8 +41,8 @@ module BucketStore
     # Given a `key` in the format of `adapter://bucket/key` returns the corresponding
     # adapter that will allow to manipulate (e.g. download, upload or list) such key.
     #
-    # Currently supported adapters are `gs` (Google Cloud Storage), `inmemory` (an
-    # in-memory key-value storage) and `disk` (a disk-backed key-value store).
+    # Currently supported adapters are `gs` (Google Cloud Storage), `s3` (AWS S3),
+    # `inmemory` (an in-memory key-value storage) and `disk` (a disk-backed key-value store).
     #
     # @param [String] key The reference key
     # @return [KeyStorage] An interface to the adapter that can handle requests on the given key
