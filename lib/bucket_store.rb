@@ -4,6 +4,7 @@ require "bucket_store/version"
 require "bucket_store/configuration"
 require "bucket_store/key_context"
 require "bucket_store/key_storage"
+require "bucket_store/uri_builder"
 
 # An abstraction layer on the top of file cloud storage systems such as Google Cloud
 # Storage or S3. This module exposes a generic interface that allows interoperability

@@ -35,14 +35,23 @@ RSpec.describe BucketStore, :integration do
         described_class.for("#{base_bucket_uri}/prefix/#{filename}").upload!(filename)
       end
 
+      # Add some files with spaces
+      described_class.for("#{base_bucket_uri}/prefix/i have a space.txt").
+        upload!("i have a space.txt")
+      described_class.for("#{base_bucket_uri}/prefix/another space.txt").
+        upload!("another space.txt")
+
+      file_list << "i have a space.txt"
+      file_list << "another space.txt"
+
       # List with prefix should only return the matching files
       expect(described_class.for("#{base_bucket_uri}/prefix/file1").list.to_a.size).to eq(100)
       expect(described_class.for("#{base_bucket_uri}/prefix/file2").list.to_a.size).to eq(2)
-      expect(described_class.for("#{base_bucket_uri}/prefix/").list.to_a.size).to eq(201)
+      expect(described_class.for("#{base_bucket_uri}/prefix/").list.to_a.size).to eq(203)
 
       # List (without prefixes) should return everything
       expect(described_class.for(base_bucket_uri.to_s).list.to_a).
-        to eq(file_list.map { |filename| "#{base_bucket_uri}/prefix/#{filename}" })
+        to match_array(file_list.map { |filename| "#{base_bucket_uri}/prefix/#{filename}" })
 
       # We know the content of the file, we can check `.download` returns it as expected
       all_files = file_list.map do |filename|
