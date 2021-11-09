@@ -4,6 +4,7 @@ require "bucket_store/version"
 require "bucket_store/configuration"
 require "bucket_store/key_context"
 require "bucket_store/key_storage"
+require "bucket_store/uri_builder"
 
 # An abstraction layer on the top of file cloud storage systems such as Google Cloud
 # Storage or S3. This module exposes a generic interface that allows interoperability
@@ -41,8 +42,8 @@ module BucketStore
     # Given a `key` in the format of `adapter://bucket/key` returns the corresponding
     # adapter that will allow to manipulate (e.g. download, upload or list) such key.
     #
-    # Currently supported adapters are `gs` (Google Cloud Storage), `inmemory` (an
-    # in-memory key-value storage) and `disk` (a disk-backed key-value store).
+    # Currently supported adapters are `gs` (Google Cloud Storage), `s3` (AWS S3),
+    # `inmemory` (an in-memory key-value storage) and `disk` (a disk-backed key-value store).
     #
     # @param [String] key The reference key
     # @return [KeyStorage] An interface to the adapter that can handle requests on the given key

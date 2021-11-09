@@ -45,6 +45,28 @@ RSpec.describe BucketStore::KeyContext do
           expect(instance.key).to eq("")
         end
       end
+
+      context "with characters that would need to be escaped" do
+        context "with a space" do
+          let(:key) { "scheme://bucket/hello world" }
+
+          it "parses the key" do
+            expect(instance.adapter).to eq("scheme")
+            expect(instance.bucket).to eq("bucket")
+            expect(instance.key).to eq("hello world")
+          end
+        end
+
+        context "with a %" do
+          let(:key) { "scheme://bucket/hello%world" }
+
+          it "parses the key" do
+            expect(instance.adapter).to eq("scheme")
+            expect(instance.bucket).to eq("bucket")
+            expect(instance.key).to eq("hello%world")
+          end
+        end
+      end
     end
   end
 end
