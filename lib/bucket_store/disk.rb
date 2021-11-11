@@ -4,8 +4,7 @@ require "fileutils"
 
 module BucketStore
   class Disk
-    def self.build(base_dir = ENV["DISK_ADAPTER_BASE_DIR"])
-      base_dir ||= Dir.tmpdir
+    def self.build(base_dir = BucketStore.configuration.disk_adapter_base_directory)
       Disk.new(base_dir)
     end
 
