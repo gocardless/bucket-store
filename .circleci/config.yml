@@ -27,7 +27,7 @@ jobs:
       ruby_version:
         type: string
     docker:
-      - image: circleci/ruby:<< parameters.ruby_version >>
+      - image: cimg/ruby:<< parameters.ruby_version >>
     steps:
       - add_ssh_keys
       - checkout
@@ -43,7 +43,7 @@ jobs:
       ruby_version:
         type: string
     docker:
-      - image: circleci/ruby:<< parameters.ruby_version >>
+      - image: cimg/ruby:<< parameters.ruby_version >>
     steps:
       - add_ssh_keys
       - checkout
@@ -59,7 +59,7 @@ jobs:
       ruby_version:
         type: string
     docker:
-      - image: circleci/ruby:<< parameters.ruby_version >>
+      - image: cimg/ruby:<< parameters.ruby_version >>
       - image: quay.io/minio/minio
         environment:
           MINIO_ROOT_USER: minioadmin
@@ -84,12 +84,12 @@ workflows:
       - code_quality:
           matrix:
             parameters:
-              ruby_version: ["3.0"]
+              ruby_version: ["2.6"]
       - rspec:
           matrix:
             parameters:
-              ruby_version: ["2.6", "2.7", "3.0"]
+              ruby_version: ["2.6", "2.7", "3.0", "3.1"]
       - integration:
           matrix:
             parameters:
-              ruby_version: ["2.6", "2.7", "3.0"]
+              ruby_version: ["2.6", "2.7", "3.0", "3.1"]
