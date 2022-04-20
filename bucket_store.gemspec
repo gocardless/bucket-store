@@ -28,4 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rubocop", "~> 1.24"
   s.add_development_dependency "rubocop-performance", "~> 1.13"
   s.add_development_dependency "rubocop-rspec", "~> 2.7"
+
+  s.metadata["rubygems_mfa_required"] = "true"
 end
