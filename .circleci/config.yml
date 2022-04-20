@@ -84,12 +84,12 @@ workflows:
       - code_quality:
           matrix:
             parameters:
-              ruby_version: ["2.6"]
+              ruby_version: ["2.7"]
       - rspec:
           matrix:
             parameters:
-              ruby_version: ["2.6", "2.7", "3.0", "3.1"]
+              ruby_version: ["2.7", "3.0", "3.1"]
       - integration:
           matrix:
             parameters:
-              ruby_version: ["2.6", "2.7", "3.0", "3.1"]
+              ruby_version: ["2.7", "3.0", "3.1"]

@@ -1,3 +1,7 @@
+v0.6.0
+------
+- Drop support for Ruby 2.6
+
 v0.5.0
 ------
 - Support escaping of URI keys. Fixes #46.
