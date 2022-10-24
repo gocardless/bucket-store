@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_dependency "aws-sdk-s3", ">= 1.104"
   s.add_dependency "google-cloud-storage", ">= 1.34"
 
-  s.add_development_dependency "gc_ruboconfig", "~> 2.29"
+  s.add_development_dependency "gc_ruboconfig", "~> 3.5"
   s.add_development_dependency "pry-byebug", "~> 3.9"
   s.add_development_dependency "rspec", "~> 3.10"
   s.add_development_dependency "rspec_junit_formatter", "~> 0.5.1"
