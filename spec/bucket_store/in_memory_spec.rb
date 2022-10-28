@@ -105,7 +105,7 @@ RSpec.describe BucketStore::InMemory do
       context "when there are multiple pages of results available" do
         it "returns an enumerable" do
           expect(instance.list(bucket: bucket, key: "2019-01", page_size: 1)).
-            to be_a_kind_of(Enumerable)
+            to be_a(Enumerable)
         end
 
         it "enumerates through all the pages" do
