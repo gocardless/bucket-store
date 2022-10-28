@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "pry-byebug", "~> 3.9"
   s.add_development_dependency "rspec", "~> 3.10"
   s.add_development_dependency "rspec-github", "~> 2.3.1"
+  s.metadata["rubygems_mfa_required"] = "true"
 end
