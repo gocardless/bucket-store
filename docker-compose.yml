@@ -10,3 +10,5 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
       MINIO_REGION_NAME: us-east-1
+    ports:
+      - "9000:9000"
