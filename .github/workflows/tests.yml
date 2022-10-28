@@ -45,4 +45,4 @@ jobs:
           bundler-cache: true
           ruby-version: "${{ matrix.ruby-version }}"
       - name: Run tests
-        run: bundle exec rspec --format RSpec::Github::Formatter
+        run: bundle exec rspec --tag integration --format RSpec::Github::Formatter
