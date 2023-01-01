@@ -174,3 +174,4 @@ a single test bucket. Once minio has started, integration tests can be executed 
 * Bug reports and pull requests are welcome on GitHub at https://github.com/gocardless/bucket-store.
 
 GoCardless ♥ open source. If you do too, come [join us](https://gocardless.com/about/careers/).
+test
