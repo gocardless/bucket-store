@@ -154,4 +154,31 @@ RSpec.describe BucketStore::KeyStorage do
       expect(build_for("inmemory://bucket/prefix/a").exists?).to be false
     end
   end
+
+  describe "#stream" do
+    let!(:large_file_content) { "Z" * 1024 * 1024 * 10 } # 10Mb
+
+    before do
+      build_for("inmemory://bucket/small").upload!("hello world")
+      build_for("inmemory://bucket/large").upload!(large_file_content)
+    end
+
+    describe "#download" do
+      it "returns a single chunk for small files" do
+        expect(build_for("inmemory://bucket/small").stream.download).to contain_exactly([
+          { bucket: "bucket", key: "small" }, an_instance_of(String)
+        ])
+      end
+
+      it "returns the file content in chunks for larger files" do
+        rebuilt =
+          build_for("inmemory://bucket/large").stream.download.map do |metadata, chunk|
+            expect(metadata).to eq({ bucket: "bucket", key: "large" })
+            chunk
+          end.join
+
+        expect(rebuilt).to eq(large_file_content)
+      end
+    end
+  end
 end

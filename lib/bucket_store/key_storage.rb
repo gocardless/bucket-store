@@ -15,6 +15,59 @@ module BucketStore
       disk: Disk,
     }.freeze
 
+    # Defines a streaming interface for download and upload operations.
+    #
+    # Note that individual adapters may require additional configuration for the correct
+    # behavior of the streaming interface.
+    class KeyStreamer
+      attr_reader :bucket, :key, :adapter
+
+      def initialize(adapter:, bucket:, key:)
+        @adapter = adapter
+        @bucket = bucket
+        @key = key
+      end
+
+      # Streams the content of the reference key
+      #
+      # @param [optional, Integer] chunk_size The maximum size of individual chunks.
+      #   Note that adapters will only return at most the given size, but could
+      #   return a smaller chunk when needed.
+      #
+      # @return [Enumerator]
+      #   An enumerator where each item is a hash that includes a chunk of the downloaded result.
+      #   The format of the hash returned on each iteration is compatible with what is returned by
+      #   the non-streaming version of the `download` method, however the content of each item is
+      #   limited in size.
+      #
+      # @see KeyStorage#download
+      # @example Download a key
+      #   BucketStore.for("inmemory://bucket/file.xml").stream.download
+      def download(chunk_size: nil)
+        if !chunk_size.nil? && chunk_size <= 0
+          raise ArgumentError, "Chunk size must be > 0 when specified"
+        end
+
+        BucketStore.logger.info(event: "key_storage.stream.download_started")
+
+        start = BucketStore::Timing.monotonic_now
+        result = adapter.stream_download(
+          bucket: bucket,
+          key: key,
+          chunk_size: chunk_size,
+        )
+
+        BucketStore.logger.info(event: "key_storage.stream.download_prepared",
+                                duration: BucketStore::Timing.monotonic_now - start)
+
+        result
+      end
+
+      def upload
+        raise NotImplementedError
+      end
+    end
+
     attr_reader :bucket, :key, :adapter_type
 
     def initialize(adapter:, bucket:, key:)
@@ -51,6 +104,15 @@ module BucketStore
                               duration: BucketStore::Timing.monotonic_now - start)
 
       result
+    end
+
+    # Returns an interface for streaming operations
+    #
+    # @return [KeyStreamer] An interface for streaming operations
+    def stream
+      raise ArgumentError, "Key cannot be empty" if key.empty?
+
+      KeyStreamer.new(adapter: adapter, bucket: bucket, key: key)
     end
 
     # Uploads the given content to the reference key location.

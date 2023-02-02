@@ -2,6 +2,8 @@
 
 module BucketStore
   class InMemory
+    DEFAULT_STREAM_CHUNK_SIZE_BYTES = 1024 * 1024 * 4 # 4Mb
+
     def self.build
       InMemory.instance
     end
@@ -39,6 +41,25 @@ module BucketStore
         key: key,
         content: @buckets[bucket].fetch(key),
       }
+    end
+
+    def stream_download(bucket:, key:, chunk_size: nil)
+      chunk_size ||= DEFAULT_STREAM_CHUNK_SIZE_BYTES
+
+      content_stream = StringIO.new(@buckets[bucket].fetch(key))
+      metadata = {
+        bucket: bucket,
+        key: key,
+      }.freeze
+
+      Enumerator.new do |yielder|
+        loop do
+          v = content_stream.read(chunk_size)
+          break if v.nil?
+
+          yielder.yield([metadata, v])
+        end
+      end
     end
 
     def list(bucket:, key:, page_size:)
