@@ -68,7 +68,7 @@ RSpec.describe BucketStore, :integration do
       end
 
       # Delete all the files, the bucket should be empty afterwards
-      file_list.map { |filename| "#{base_bucket_uri}/prefix/#{filename}" }.each do |key|
+      described_class.for(base_bucket_uri.to_s).list.each do |key|
         described_class.for(key).delete!
       end
       expect(described_class.for(base_bucket_uri.to_s).list.to_a.size).to eq(0)
