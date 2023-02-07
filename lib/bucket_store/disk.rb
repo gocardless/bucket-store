@@ -4,6 +4,8 @@ require "fileutils"
 
 module BucketStore
   class Disk
+    DEFAULT_STREAM_CHUNK_SIZE_BYTES = 1024 * 1024 * 4 # 4Mb
+
     def self.build(base_dir = ENV["DISK_ADAPTER_BASE_DIR"])
       base_dir ||= Dir.tmpdir
       Disk.new(base_dir)
@@ -30,6 +32,25 @@ module BucketStore
           key: key,
           content: file.read,
         }
+      end
+    end
+
+    def stream_download(bucket:, key:, chunk_size: nil)
+      chunk_size ||= DEFAULT_STREAM_CHUNK_SIZE_BYTES
+
+      fd = File.open(key_path(bucket, key), "r")
+      metadata = {
+        bucket: bucket,
+        key: key,
+      }.freeze
+
+      Enumerator.new do |yielder|
+        loop do
+          v = fd.gets(chunk_size)
+          break if v.nil?
+
+          yielder.yield([metadata, v])
+        end
       end
     end
 
