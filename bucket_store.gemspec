@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.files = Dir["lib/**/*", "README.md"]
 
-  s.required_ruby_version = ">= 2.6"
+  s.required_ruby_version = ">= 2.7"
 
   s.add_dependency "aws-sdk-s3", ">= 1.104"
   s.add_dependency "google-cloud-storage", ">= 1.34"
