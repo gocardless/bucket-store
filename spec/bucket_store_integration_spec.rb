@@ -18,6 +18,9 @@ RSpec.describe BucketStore, :integration do
       # required for minio as otherwise the client will try to resolve `bucketname.localhost:9000`
       force_path_style: true,
     )
+
+    # Setup GCS connectivity to the simulator
+    ENV["STORAGE_EMULATOR_HOST"] ||= "http://localhost:9023/"
   end
 
   shared_examples "adapter integration" do |base_bucket_uri|
@@ -73,4 +76,5 @@ RSpec.describe BucketStore, :integration do
   include_examples "adapter integration", "inmemory://bucket"
   include_examples "adapter integration", "disk://bucket"
   include_examples "adapter integration", "s3://bucket"
+  include_examples "adapter integration", "gs://bucket"
 end
