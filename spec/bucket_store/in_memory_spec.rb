@@ -109,10 +109,11 @@ RSpec.describe BucketStore::InMemory do
         end
 
         it "enumerates through all the pages" do
-          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 2).to_a).to match_array([
-            { bucket: bucket, keys: have_attributes(length: 2) },
-            { bucket: bucket, keys: have_attributes(length: 1) },
-          ])
+          expect(instance.list(bucket: bucket, key: "2019-01", page_size: 2).to_a).
+            to contain_exactly(
+              { bucket: bucket, keys: have_attributes(length: 2) },
+              { bucket: bucket, keys: have_attributes(length: 1) },
+            )
         end
       end
     end
