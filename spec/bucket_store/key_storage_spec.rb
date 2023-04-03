@@ -36,9 +36,9 @@ RSpec.describe BucketStore::KeyStorage do
       end
 
       it "returns all the files in the bucket" do
-        expect(build_for("inmemory://bucket/").list).to match_array([
+        expect(build_for("inmemory://bucket/").list).to contain_exactly(
           "inmemory://bucket/file1.json", "inmemory://bucket/file2.json"
-        ])
+        )
       end
 
       it "logs the operation" do
@@ -54,9 +54,9 @@ RSpec.describe BucketStore::KeyStorage do
 
       context "but the URI does not have a trailing /" do
         it "returns all the files in the bucket" do
-          expect(build_for("inmemory://bucket").list).to match_array([
+          expect(build_for("inmemory://bucket").list).to contain_exactly(
             "inmemory://bucket/file1.json", "inmemory://bucket/file2.json"
-          ])
+          )
         end
       end
     end
