@@ -24,8 +24,11 @@ RSpec.describe BucketStore, :integration do
   end
 
   shared_examples "adapter integration" do |base_bucket_uri|
-    # This is presented as a single idempotent test as otherwise resetting state between execution
-    # makes things very complicated with no huge benefits.
+    before do
+      described_class.for(base_bucket_uri).list.each do |path|
+        described_class.for(path).delete!
+      end
+    end
 
     it "has a consistent interface" do
       # Write 201 files
