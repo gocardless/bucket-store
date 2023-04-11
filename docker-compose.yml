@@ -12,3 +12,13 @@ services:
       MINIO_REGION_NAME: us-east-1
     ports:
       - "9000:9000"
+  gcp-simulator:
+    image: fsouza/fake-gcs-server
+    hostname: gcp
+    environment:
+      PORT: 9023
+    entrypoint: "/bin/sh"
+    command: |-
+      -c "mkdir -p /data/bucket && /bin/fake-gcs-server -scheme=http -backend=filesystem -filesystem-root=/data -port=9023"
+    ports:
+      - "9023:9023"
