@@ -163,10 +163,14 @@ BucketStore.for("inmemory://bucket/path/file.xml").delete!
 
 ### Running tests
 BucketStore comes with both unit and integration tests. While unit tests can be run by simply
-executing `bundle exec rspec`, integration tests require running minio locally. We provide an
-helper script (`scripts/run-minio.sh`) that spins up a pre-configured docker container with
-a single test bucket. Once minio has started, integration tests can be executed with
-`bundle exec rspec --tag integration`.
+executing `bundle exec rspec`, integration tests require running minio locally. We provide a
+docker-compose file that spins up pre-configured simulator instances for S3 and GCS with
+test buckets. Running the integration tests is as easy as:
+
+```
+docker-compose up
+bundle exec rspec --tag integration
+```
 
 ## License & Contributing
 
