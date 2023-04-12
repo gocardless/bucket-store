@@ -31,6 +31,10 @@ RSpec.describe BucketStore, :integration do
         end
       end
 
+      it "returns an empty bucket when no files are uploaded" do
+        expect(described_class.for(base_bucket_uri.to_s).list.to_a.size).to eq(0)
+      end
+
       it "has a consistent interface" do
         # Write 201 files
         file_list = []
@@ -74,10 +78,30 @@ RSpec.describe BucketStore, :integration do
         end
         expect(described_class.for(base_bucket_uri.to_s).list.to_a.size).to eq(0)
       end
+
+      context "using the streaming interface" do
+        it "supports large file downloads" do
+          # Upload a large file
+          large_file_content = "Z" * 1024 * 1024 * 10 # 10Mb
+          described_class.
+            for("#{base_bucket_uri}/large.txt").
+            upload!(large_file_content)
+
+          # Streaming downloads should return a chunked response
+          rebuilt_large_file =
+            described_class.for("#{base_bucket_uri}/large.txt").
+              stream.
+              download.
+              map { |_meta, chunk| chunk }.
+              join
+
+          expect(rebuilt_large_file.size).to eq(large_file_content.size)
+          expect(rebuilt_large_file).to eq(large_file_content)
+        end
+      end
     end
   end
 
-  # We don't test GCS as there's no sensible way of running a local simulator
   include_examples "adapter integration", "inmemory://bucket"
   include_examples "adapter integration", "disk://bucket"
   include_examples "adapter integration", "s3://bucket"
