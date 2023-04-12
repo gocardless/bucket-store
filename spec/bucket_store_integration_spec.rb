@@ -98,6 +98,22 @@ RSpec.describe BucketStore, :integration do
           expect(rebuilt_large_file.size).to eq(large_file_content.size)
           expect(rebuilt_large_file).to eq(large_file_content)
         end
+
+        it "allows downloads of individual small chunks" do
+          described_class.
+            for("#{base_bucket_uri}/large.txt").
+            upload!("1234567890")
+
+          chunks = described_class.for("#{base_bucket_uri}/large.txt").
+            stream.
+            download(chunk_size: 1).
+            to_a
+
+          expect(chunks.size).to eq(10)
+          expect(chunks.map { |_meta, chunk| chunk }).to match_array(
+            %w[1 2 3 4 5 6 7 8 9 0],
+          )
+        end
       end
     end
   end
