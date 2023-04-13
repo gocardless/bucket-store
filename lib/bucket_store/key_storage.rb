@@ -73,7 +73,12 @@ module BucketStore
             raise ArgumentError, "Content must be a valid string"
           end
 
+          puts @uploader
           @uploader.call(content)
+        end
+
+        def complete
+          @uploader.finish
         end
       end
 
@@ -81,14 +86,17 @@ module BucketStore
         BucketStore.logger.info(event: "key_storage.stream.upload_started")
 
         start = BucketStore::Timing.monotonic_now
-        yield StreamUploader.new(adapter.stream_upload(
+        uploader = StreamUploader.new(adapter.stream_upload(
                                    bucket: bucket,
                                    key: key,
                                  ))
+        yield uploader
+        uploader.finish
 
         BucketStore.logger.info(event: "key_storage.stream.upload_finished",
                                 duration: BucketStore::Timing.monotonic_now - start)
 
+        # should be returned by the adapter
         {
           bucket: bucket,
           key: key,

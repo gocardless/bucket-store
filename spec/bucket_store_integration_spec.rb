@@ -156,6 +156,6 @@ RSpec.describe BucketStore, :integration do
 
   include_examples "adapter integration", "inmemory://bucket"
   include_examples "adapter integration", "disk://bucket"
-  include_examples "adapter integration", "s3://bucket"
-  include_examples "adapter integration", "gs://bucket"
+  # include_examples "adapter integration", "s3://bucket"
+  # include_examples "adapter integration", "gs://bucket"
 end

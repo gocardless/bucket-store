@@ -54,6 +54,17 @@ module BucketStore
       end
     end
 
+    def stream_upload(bucket:, key:)
+      fd = File.open(key_path(bucket, key), "w")
+
+      yield(proc do |content|
+        fd.write(content)
+      end)
+
+      fd.flush
+      fd.close
+    end
+
     def list(bucket:, key:, page_size:)
       root = Pathname.new(bucket_root(bucket))
 

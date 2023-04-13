@@ -63,9 +63,10 @@ module BucketStore
     end
 
     def stream_upload(bucket:, key:)
-      @buckets[bucket][key] = ""
-      proc do |content|
-        @buckets[bucket][key] += content
+      Class.new < StreamUploader do
+        def initialize
+
+        end
       end
     end
 
