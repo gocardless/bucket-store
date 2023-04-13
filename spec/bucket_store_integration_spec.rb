@@ -114,6 +114,42 @@ RSpec.describe BucketStore, :integration do
             %w[1 2 3 4 5 6 7 8 9 0],
           )
         end
+
+        it "supports large file uploads" do
+          # Upload a large file
+          large_file_chunks = ["Z" * 1024 * 1024] * 10 # 10Mb
+          large_file_content = large_file_chunks.join
+
+          described_class.
+            for("#{base_bucket_uri}/large.txt").
+            stream.
+            upload do |uploader|
+              large_file_chunks.
+                each do |chunk|
+                  uploader.upload!(*chunk)
+                end
+            end
+
+          # Streaming downloads should return a chunked response
+          downloaded_large_file =
+            described_class.for("#{base_bucket_uri}/large.txt").
+              download[:content]
+
+          expect(downloaded_large_file.size).to eq(large_file_content.size)
+          expect(downloaded_large_file).to eq(large_file_content)
+        end
+
+        it "allows uploads of individual small chunks" do
+          described_class.
+            for("#{base_bucket_uri}/large.txt").
+            stream.
+            upload do |uploader|
+            "1234567890".chars.each { |content| uploader.upload!(content) }
+          end
+
+          expect(described_class.for("#{base_bucket_uri}/large.txt").download[:content]).
+            to eq("1234567890")
+        end
       end
     end
   end

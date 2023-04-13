@@ -63,8 +63,36 @@ module BucketStore
         result
       end
 
+      class StreamUploader
+        def initialize(uploader)
+          @uploader = uploader
+        end
+
+        def upload!(content)
+          if content.nil?
+            raise ArgumentError, "Content must be a valid string"
+          end
+
+          @uploader.call(content)
+        end
+      end
+
       def upload
-        raise NotImplementedError
+        BucketStore.logger.info(event: "key_storage.stream.upload_started")
+
+        start = BucketStore::Timing.monotonic_now
+        yield StreamUploader.new(adapter.stream_upload(
+                                   bucket: bucket,
+                                   key: key,
+                                 ))
+
+        BucketStore.logger.info(event: "key_storage.stream.upload_finished",
+                                duration: BucketStore::Timing.monotonic_now - start)
+
+        {
+          bucket: bucket,
+          key: key,
+        }
       end
     end
 

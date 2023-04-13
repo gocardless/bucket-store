@@ -62,6 +62,13 @@ module BucketStore
       end
     end
 
+    def stream_upload(bucket:, key:)
+      @buckets[bucket][key] = ""
+      proc do |content|
+        @buckets[bucket][key] += content
+      end
+    end
+
     def list(bucket:, key:, page_size:)
       @buckets[bucket].keys.
         select { |k| k.start_with?(key) }.
