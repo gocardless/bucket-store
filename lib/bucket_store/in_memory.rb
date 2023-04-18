@@ -24,8 +24,8 @@ module BucketStore
       @buckets = Hash.new { |hash, key| hash[key] = {} }
     end
 
-    def upload!(bucket:, key:, content:)
-      @buckets[bucket][key] = content
+    def upload!(bucket:, key:, file:)
+      @buckets[bucket][key] = file.read
 
       {
         bucket: bucket,

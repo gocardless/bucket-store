@@ -13,9 +13,9 @@ module BucketStore
       @base_dir = File.expand_path(base_dir)
     end
 
-    def upload!(bucket:, key:, content:)
-      File.open(key_path(bucket, key), "w") do |file|
-        file.write(content)
+    def upload!(bucket:, key:, file:)
+      File.open(key_path(bucket, key), "w") do |output_file|
+        output_file.write(file.read)
       end
       {
         bucket: bucket,

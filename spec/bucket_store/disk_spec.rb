@@ -10,13 +10,16 @@ RSpec.describe BucketStore::Disk do
   let(:bucket) { "bucket" }
   let!(:base_dir) { Dir.mktmpdir("disk-adapter-test") }
 
+  let(:original_content) { "world" }
+  let(:file) { StringIO.new(original_content) }
+
   after do
     FileUtils.remove_entry(base_dir)
   end
 
   describe "#upload!" do
     it "uploads the given content" do
-      instance.upload!(bucket: bucket, key: "hello", content: "world")
+      instance.upload!(bucket: bucket, key: "hello", file: file)
 
       expect(instance.download(bucket: bucket, key: "hello")).to eq(
         bucket: bucket,
@@ -26,10 +29,10 @@ RSpec.describe BucketStore::Disk do
     end
 
     context "when uploading over a key that already exists" do
-      before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+      before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
       it "overrides the content" do
-        instance.upload!(bucket: bucket, key: "hello", content: "planet")
+        instance.upload!(bucket: bucket, key: "hello", file: StringIO.new("planet"))
 
         expect(instance.download(bucket: bucket, key: "hello")).to eq(
           bucket: bucket,
@@ -46,7 +49,7 @@ RSpec.describe BucketStore::Disk do
       end
 
       it "puts the content in the right directory" do
-        instance.upload!(bucket: bucket, key: "hello", content: "world")
+        instance.upload!(bucket: bucket, key: "hello", file: file)
 
         expect(instance.download(bucket: bucket, key: "hello")).to eq(
           bucket: bucket,
@@ -58,7 +61,7 @@ RSpec.describe BucketStore::Disk do
 
     context "when given a key with invalid chars" do
       it "sanitizes the filename" do
-        instance.upload!(bucket: bucket, key: "this is % invalid", content: "%%%%")
+        instance.upload!(bucket: bucket, key: "this is % invalid", file: StringIO.new("%%%%"))
 
         expect(instance.list(bucket: bucket, key: "", page_size: 1000).first).to match(
           bucket: bucket,
@@ -77,7 +80,7 @@ RSpec.describe BucketStore::Disk do
     end
 
     context "when the key has been uploaded" do
-      before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+      before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
       it "returns the uploaded content" do
         expect(instance.download(bucket: bucket, key: "hello")).to eq(
@@ -112,11 +115,11 @@ RSpec.describe BucketStore::Disk do
 
     context "when the bucket has some keys in it" do
       before do
-        instance.upload!(bucket: bucket, key: "2019-01/hello1", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello2", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello3", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-02/hello", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-03/hello", content: "world")
+        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: file)
+        instance.upload!(bucket: bucket, key: "2019-02/hello", file: file)
+        instance.upload!(bucket: bucket, key: "2019-03/hello", file: file)
       end
 
       context "and we provide a matching prefix" do
@@ -159,7 +162,7 @@ RSpec.describe BucketStore::Disk do
   end
 
   describe "#delete!" do
-    before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+    before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
     it "deletes the given content" do
       expect(instance.delete!(bucket: bucket, key: "hello")).to eq(true)

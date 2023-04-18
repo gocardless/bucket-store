@@ -20,11 +20,11 @@ module BucketStore
       )
     end
 
-    def upload!(bucket:, key:, content:)
+    def upload!(bucket:, key:, file:)
       storage.put_object(
         bucket: bucket,
         key: key,
-        body: content,
+        body: file,
       )
 
       {

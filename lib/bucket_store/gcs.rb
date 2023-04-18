@@ -33,9 +33,8 @@ module BucketStore
                  end
     end
 
-    def upload!(bucket:, key:, content:)
-      buffer = StringIO.new(content)
-      get_bucket(bucket).create_file(buffer, key)
+    def upload!(bucket:, key:, file:)
+      get_bucket(bucket).create_file(file, key)
 
       {
         bucket: bucket,
