@@ -115,33 +115,6 @@ RSpec.describe BucketStore::KeyStorage do
           to raise_error(ArgumentError, /key cannot be empty/i)
       end
     end
-
-    context "when given a file like object" do
-      let(:file) { StringIO.new("hello") }
-
-      it "uploads the given file" do
-        expect(build_for("inmemory://bucket/file1").upload!(file)).
-          to eq("inmemory://bucket/file1")
-      end
-
-      it "logs the operation" do
-        expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.upload_started"),
-        )
-        expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.upload_finished"),
-        )
-
-        build_for("inmemory://bucket/file1").upload!(file)
-      end
-
-      context "when we try to upload a bucket" do
-        it "raises an error" do
-          expect { build_for("inmemory://bucket").upload!(file) }.
-            to raise_error(ArgumentError, /key cannot be empty/i)
-        end
-      end
-    end
   end
 
   describe "#delete!" do

@@ -59,23 +59,15 @@ module BucketStore
     end
 
     # Uploads the given file to the reference key location.
-    # If the File is a file like object then upload as is.
-    # If the file variable is actually a string then treat is as the file
-    # contents and upload as is.
     #
     # If the `key` already exists, its content will be replaced by the one in input.
     #
-    # @param [String or File like object] file The file like object to upload or a String
-    #         with the contents
+    # @param [String] content Contents of the file
     # @return [String] The final `key` where the content has been uploaded
     # @example Upload a file
     #   BucketStore.for("inmemory://bucket/file.xml").upload!("hello world")
-    def upload!(file)
+    def upload!(content)
       raise ArgumentError, "Key cannot be empty" if key.empty?
-
-      if file.instance_of?(String)
-        file = StringIO.new(file)
-      end
 
       BucketStore.logger.info(event: "key_storage.upload_started",
                               **log_context)
@@ -84,7 +76,7 @@ module BucketStore
       result = adapter.upload!(
         bucket: bucket,
         key: key,
-        file: file,
+        file: StringIO.new(content),
       )
 
       BucketStore.logger.info(event: "key_storage.upload_finished",
