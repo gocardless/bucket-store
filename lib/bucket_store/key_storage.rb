@@ -53,34 +53,40 @@ module BucketStore
       result
     end
 
-    # Uploads the given content to the reference key location.
+    # Uploads the given file to the reference key location.
+    # If the File is a file like object then upload as is.
+    # If the file variable is actually a string then treat is as the file
+    # contents and upload as is.
     #
     # If the `key` already exists, its content will be replaced by the one in input.
     #
-    # @param [String] content The content to upload
+    # @param [String or File like object] file The file like object to upload or a String
+    #         with the contents
     # @return [String] The final `key` where the content has been uploaded
     # @example Upload a file
     #   BucketStore.for("inmemory://bucket/file.xml").upload!("hello world")
-    def upload!(content)
-      do_upload!(
-        StringIO.new(content),
-        "upload",
-      )
-    end
+    def upload!(file)
+      raise ArgumentError, "Key cannot be empty" if key.empty?
 
-    # Uploads the given file like object to the reference key location.
-    #
-    # If the `key` already exists, its content will be replaced by the one in input.
-    #
-    # @param [IO / file like] file The content to upload
-    # @return [String] The final `key` where the content has been uploaded
-    # @example Upload a file
-    #   BucketStore.for("inmemory://bucket/file.xml").upload_file!(File.open("my_file.txt", "r"))
-    def upload_file!(file)
-      do_upload!(
-        file,
-        "upload_file",
+      if file.instance_of?(String)
+        file = StringIO.new(file)
+      end
+
+      BucketStore.logger.info(event: "key_storage.upload_started",
+                              **log_context)
+
+      start = BucketStore::Timing.monotonic_now
+      result = adapter.upload!(
+        bucket: bucket,
+        key: key,
+        file: file,
       )
+
+      BucketStore.logger.info(event: "key_storage.upload_finished",
+                              duration: BucketStore::Timing.monotonic_now - start,
+                              **log_context)
+
+      "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
     end
 
     # Lists all keys for the current adapter that have the reference key as prefix
@@ -168,26 +174,6 @@ module BucketStore
         key: key,
         adapter_type: adapter_type,
       }.compact
-    end
-
-    def do_upload!(file, event_prefix)
-      raise ArgumentError, "Key cannot be empty" if key.empty?
-
-      BucketStore.logger.info(event: "key_storage.#{event_prefix}_started",
-                              **log_context)
-
-      start = BucketStore::Timing.monotonic_now
-      result = adapter.upload!(
-        bucket: bucket,
-        key: key,
-        file: file,
-      )
-
-      BucketStore.logger.info(event: "key_storage.#{event_prefix}_finished",
-                              duration: BucketStore::Timing.monotonic_now - start,
-                              **log_context)
-
-      "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
     end
   end
 end
