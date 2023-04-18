@@ -12,6 +12,8 @@ RSpec.describe BucketStore::Disk do
 
   let(:original_content) { "world" }
   let(:file) { StringIO.new(original_content) }
+  let(:output_file) { StringIO.new }
+  let(:downloaded_content) { output_file.string }
 
   after do
     FileUtils.remove_entry(base_dir)
@@ -21,11 +23,9 @@ RSpec.describe BucketStore::Disk do
     it "uploads the given content" do
       instance.upload!(bucket: bucket, key: "hello", file: file)
 
-      expect(instance.download(bucket: bucket, key: "hello")).to eq(
-        bucket: bucket,
-        key: "hello",
-        content: "world",
-      )
+      instance.download(bucket: bucket, key: "hello", file: output_file)
+
+      expect(downloaded_content).to eq("world")
     end
 
     context "when uploading over a key that already exists" do
@@ -34,11 +34,9 @@ RSpec.describe BucketStore::Disk do
       it "overrides the content" do
         instance.upload!(bucket: bucket, key: "hello", file: StringIO.new("planet"))
 
-        expect(instance.download(bucket: bucket, key: "hello")).to eq(
-          bucket: bucket,
-          key: "hello",
-          content: "planet",
-        )
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+
+        expect(downloaded_content).to eq("planet")
       end
     end
 
@@ -51,11 +49,9 @@ RSpec.describe BucketStore::Disk do
       it "puts the content in the right directory" do
         instance.upload!(bucket: bucket, key: "hello", file: file)
 
-        expect(instance.download(bucket: bucket, key: "hello")).to eq(
-          bucket: bucket,
-          key: "hello",
-          content: "world",
-        )
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+
+        expect(downloaded_content).to eq("world")
       end
     end
 
@@ -74,7 +70,7 @@ RSpec.describe BucketStore::Disk do
   describe "#download" do
     context "when the key does not exist" do
       it "raises an error" do
-        expect { instance.download(bucket: bucket, key: "unknown") }.
+        expect { instance.download(bucket: bucket, key: "unknown", file: output_file) }.
           to raise_error(Errno::ENOENT, /No such file or directory/)
       end
     end
@@ -83,16 +79,14 @@ RSpec.describe BucketStore::Disk do
       before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
       it "returns the uploaded content" do
-        expect(instance.download(bucket: bucket, key: "hello")).to eq(
-          bucket: bucket,
-          key: "hello",
-          content: "world",
-        )
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+
+        expect(downloaded_content).to eq("world")
       end
 
       context "but we try to fetch it from a different bucket" do
         it "raises an error" do
-          expect { instance.download(bucket: "anotherbucket", key: "hello") }.
+          expect { instance.download(bucket: "anotherbucket", key: "hello", file: output_file) }.
             to raise_error(Errno::ENOENT, /No such file or directory/)
         end
       end
@@ -100,7 +94,9 @@ RSpec.describe BucketStore::Disk do
 
     context "when attempting to traverse outside of the bucket boundaries" do
       it "raises an error" do
-        expect { instance.download(bucket: bucket, key: "../../../../../../etc/passwd") }.
+        expect do
+          instance.download(bucket: bucket, key: "../../../../../../etc/passwd", file: output_file)
+        end.
           to raise_error(ArgumentError, /Directory traversal out of bucket boundaries/)
       end
     end
@@ -167,7 +163,7 @@ RSpec.describe BucketStore::Disk do
     it "deletes the given content" do
       expect(instance.delete!(bucket: bucket, key: "hello")).to eq(true)
 
-      expect { instance.download(bucket: bucket, key: "hello").download }.
+      expect { instance.download(bucket: bucket, key: "hello", file: output_file) }.
         to raise_error(Errno::ENOENT, /No such file or directory/)
     end
   end

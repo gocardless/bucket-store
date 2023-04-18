@@ -45,12 +45,17 @@ module BucketStore
       BucketStore.logger.info(event: "key_storage.download_started")
 
       start = BucketStore::Timing.monotonic_now
-      result = adapter.download(bucket: bucket, key: key)
+      buffer = StringIO.new
+      adapter.download(bucket: bucket, key: key, file: buffer)
 
       BucketStore.logger.info(event: "key_storage.download_finished",
                               duration: BucketStore::Timing.monotonic_now - start)
 
-      result
+      {
+        bucket: bucket,
+        key: key,
+        content: buffer.string,
+      }
     end
 
     # Uploads the given file to the reference key location.

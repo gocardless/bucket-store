@@ -23,13 +23,9 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      File.open(key_path(bucket, key), "r") do |file|
-        {
-          bucket: bucket,
-          key: key,
-          content: file.read,
-        }
+    def download(bucket:, key:, file:)
+      File.open(key_path(bucket, key), "r") do |saved_file|
+        file.write(saved_file.read)
       end
     end
 

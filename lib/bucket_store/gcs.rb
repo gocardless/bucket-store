@@ -42,17 +42,10 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      file = get_bucket(bucket).file(key)
-
-      buffer = StringIO.new
-      file.download(buffer)
-
-      {
-        bucket: bucket,
-        key: key,
-        content: buffer.string,
-      }
+    def download(bucket:, key:, file:)
+      get_bucket(bucket).
+        file(key).
+        download(file)
     end
 
     def list(bucket:, key:, page_size:)

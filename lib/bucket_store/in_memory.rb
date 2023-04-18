@@ -33,12 +33,8 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      {
-        bucket: bucket,
-        key: key,
-        content: @buckets[bucket].fetch(key),
-      }
+    def download(bucket:, key:, file:)
+      file.write(@buckets[bucket].fetch(key))
     end
 
     def list(bucket:, key:, page_size:)
