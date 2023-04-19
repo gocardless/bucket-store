@@ -135,16 +135,32 @@ in mind:
 
 ## Examples
 
-### Uploading a file to a bucket
+### Uploading a string to a bucket
 ```ruby
 BucketStore.for("inmemory://bucket/path/file.xml").upload!("hello world")
 => "inmemory://bucket/path/file.xml"
 ```
 
-### Accessing a file in a bucket
+### Accessing a string in a bucket
 ```ruby
 BucketStore.for("inmemory://bucket/path/file.xml").download
 => {:bucket=>"bucket", :key=>"path/file.xml", :content=>"hello world"}
+```
+
+### Uploading a file-like object to a bucket
+```ruby
+buffer = StringIO.new("This could also be an actual file")
+BucketStore.for("inmemory://bucket/path/file.xml").stream.upload!(file: buffer)
+=> "inmemory://bucket/path/file.xml"
+```
+
+### Downloading to a file-like object from a bucket
+```ruby
+buffer = StringIO.new
+BucketStore.for("inmemory://bucket/path/file.xml").stream.download(file: buffer)
+=> {:bucket=>"bucket", :key=>"path/file.xml", :file=>buffer}
+buffer.string 
+=> "This could also be an actual file"
 ```
 
 ### Listing all keys under a prefix
