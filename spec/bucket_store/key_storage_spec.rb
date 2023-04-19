@@ -75,10 +75,10 @@ RSpec.describe BucketStore::KeyStorage do
 
     it "logs the operation" do
       expect(BucketStore.logger).to receive(:info).with(
-        hash_including(event: "key_storage.stream.download_started"),
+        hash_including(event: "key_storage.download_started"),
       )
       expect(BucketStore.logger).to receive(:info).with(
-        hash_including(event: "key_storage.stream.download_finished"),
+        hash_including(event: "key_storage.download_finished"),
       )
 
       build_for("inmemory://bucket/file1").download
@@ -100,10 +100,10 @@ RSpec.describe BucketStore::KeyStorage do
 
     it "logs the operation" do
       expect(BucketStore.logger).to receive(:info).with(
-        hash_including(event: "key_storage.stream.upload_started"),
+        hash_including(event: "key_storage.upload_started"),
       )
       expect(BucketStore.logger).to receive(:info).with(
-        hash_including(event: "key_storage.stream.upload_finished"),
+        hash_including(event: "key_storage.upload_finished"),
       )
 
       build_for("inmemory://bucket/file1").upload!("hello")
@@ -158,10 +158,10 @@ RSpec.describe BucketStore::KeyStorage do
 
       it "logs the operation" do
         expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.stream.download_started"),
+          hash_including(event: "key_storage.download_started"),
         )
         expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.stream.download_finished"),
+          hash_including(event: "key_storage.download_finished"),
         )
 
         build_for("inmemory://bucket/file1").stream.download(file: output_file)
@@ -183,10 +183,10 @@ RSpec.describe BucketStore::KeyStorage do
 
       it "logs the operation" do
         expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.stream.upload_started"),
+          hash_including(event: "key_storage.upload_started"),
         )
         expect(BucketStore.logger).to receive(:info).with(
-          hash_including(event: "key_storage.stream.upload_finished"),
+          hash_including(event: "key_storage.upload_finished"),
         )
 
         stream.upload!(file: StringIO.new("hello"))

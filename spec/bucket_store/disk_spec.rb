@@ -111,11 +111,11 @@ RSpec.describe BucketStore::Disk do
 
     context "when the bucket has some keys in it" do
       before do
-        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: file)
-        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: file)
-        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: file)
-        instance.upload!(bucket: bucket, key: "2019-02/hello", file: file)
-        instance.upload!(bucket: bucket, key: "2019-03/hello", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-02/hello", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-03/hello", file: StringIO.new("world"))
       end
 
       context "and we provide a matching prefix" do

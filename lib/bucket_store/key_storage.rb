@@ -20,7 +20,7 @@ module BucketStore
     # Note that individual adapters may require additional configuration for the correct
     # behavior of the streaming interface.
     class KeyStreamer
-      attr_reader :bucket, :key, :adapter, :adapter_type
+      attr_reader :bucket, :key, :adapter_type
 
       def initialize(adapter:, adapter_type:, bucket:, key:)
         @adapter = adapter
@@ -29,8 +29,8 @@ module BucketStore
         @key = key
       end
 
-      # Streams the content of the reference key into a File like object
-      #
+      # Streams the content of the reference key into a file-like object
+      # @param [IO] file a writeable IO instance, or a file-like object such as `StringIO`
       # @return hash containing the bucket, the key and file like object passed in as input
       #
       # @see KeyStorage#download
@@ -39,7 +39,7 @@ module BucketStore
       #   BucketStore.for("inmemory://bucket/file.xml").stream.download(file: buffer)
       #   buffer.string == "Imagine I'm a 2GB file"
       def download(file:)
-        BucketStore.logger.info(event: "key_storage.stream.download_started")
+        BucketStore.logger.info(event: "key_storage.download_started")
 
         start = BucketStore::Timing.monotonic_now
         adapter.download(
@@ -48,7 +48,7 @@ module BucketStore
           file: file,
         )
 
-        BucketStore.logger.info(event: "key_storage.stream.download_finished",
+        BucketStore.logger.info(event: "key_storage.download_finished",
                                 duration: BucketStore::Timing.monotonic_now - start)
 
         {
@@ -59,7 +59,7 @@ module BucketStore
       end
 
       # Performs a streaming upload to the backing object store
-      #
+      # @param [IO] file a readable IO instance, or a file-like object such as `StringIO`
       # @return the generated key for the new object
       #
       # @see KeyStorage#upload!
@@ -69,7 +69,7 @@ module BucketStore
       def upload!(file:)
         raise ArgumentError, "Key cannot be empty" if key.empty?
 
-        BucketStore.logger.info(event: "key_storage.stream.upload_started",
+        BucketStore.logger.info(event: "key_storage.upload_started",
                                 **log_context)
 
         start = BucketStore::Timing.monotonic_now
@@ -79,7 +79,7 @@ module BucketStore
           file: file,
         )
 
-        BucketStore.logger.info(event: "key_storage.stream.upload_finished",
+        BucketStore.logger.info(event: "key_storage.upload_finished",
                                 duration: BucketStore::Timing.monotonic_now - start,
                                 **log_context)
 
@@ -87,6 +87,8 @@ module BucketStore
       end
 
       private
+
+      attr_reader :adapter
 
       def log_context
         {

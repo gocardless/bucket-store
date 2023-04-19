@@ -122,11 +122,11 @@ RSpec.describe BucketStore::InMemory do
 
     context "when there's some content" do
       before do
-        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: file)
-        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: file)
-        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: file)
-        instance.upload!(bucket: bucket2, key: "2019-02/hello", file: file)
-        instance.upload!(bucket: bucket2, key: "2019-03/hello", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket2, key: "2019-02/hello", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket2, key: "2019-03/hello", file: StringIO.new("world"))
       end
 
       it "resets all the buckets" do
