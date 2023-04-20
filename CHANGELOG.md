@@ -1,3 +1,7 @@
+v0.6.0
+------
+- Allow overriding the disk adapter base directory via the configuration class.
+
 v0.5.0
 ------
 - Support escaping of URI keys. Fixes #46.
