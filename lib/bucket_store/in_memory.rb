@@ -34,7 +34,10 @@ module BucketStore
     end
 
     def download(bucket:, key:, file:)
-      file.write(@buckets[bucket].fetch(key))
+      file.tap do |f|
+        f.write(@buckets[bucket].fetch(key))
+        f.rewind
+      end
     end
 
     def list(bucket:, key:, page_size:)
