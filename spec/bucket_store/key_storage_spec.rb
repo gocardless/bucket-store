@@ -133,8 +133,6 @@ RSpec.describe BucketStore::KeyStorage do
     end
 
     describe "#download" do
-      let(:input_file_1) { StringIO.new("content1") }
-      let(:input_file_2) { StringIO.new("content") }
       let(:output_file) { StringIO.new }
 
       before do
@@ -151,8 +149,8 @@ RSpec.describe BucketStore::KeyStorage do
           build_for("inmemory://bucket/file1").
           stream.
           download(file: output_file),
-        ).
-          to match(hash_including(file: output_file))
+        ).to match(hash_including(file: output_file))
+
         expect(output_file.string).to eq("content1")
       end
 
