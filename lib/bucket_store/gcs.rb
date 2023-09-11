@@ -36,6 +36,8 @@ module BucketStore
     def upload!(bucket:, key:, file:)
       get_bucket(bucket).create_file(file, key)
 
+      file.rewind
+
       {
         bucket: bucket,
         key: key,
@@ -43,9 +45,13 @@ module BucketStore
     end
 
     def download(bucket:, key:, file:)
-      get_bucket(bucket).
-        file(key).
-        download(file)
+      file.tap do |f|
+        get_bucket(bucket).
+          file(key).
+          download(f)
+
+        f.rewind
+      end
     end
 
     def list(bucket:, key:, page_size:)

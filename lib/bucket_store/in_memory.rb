@@ -25,7 +25,10 @@ module BucketStore
     end
 
     def upload!(bucket:, key:, file:)
-      @buckets[bucket][key] = file.read
+      file.tap do |f|
+        @buckets[bucket][key] = f.read
+        f.rewind
+      end
 
       {
         bucket: bucket,
