@@ -9,6 +9,8 @@ module BucketStore
   class Gcs
     DEFAULT_TIMEOUT_SECONDS = 30
 
+    DEFAULT_STREAM_CHUNK_SIZE_BYTES = 1024 * 1024 * 4 # 4Mb
+
     def self.build(timeout_seconds = DEFAULT_TIMEOUT_SECONDS)
       Gcs.new(timeout_seconds)
     end
@@ -54,6 +56,40 @@ module BucketStore
         key: key,
         content: buffer.string,
       }
+    end
+
+    def stream_download(bucket:, key:, chunk_size: nil)
+      chunk_size ||= DEFAULT_STREAM_CHUNK_SIZE_BYTES
+
+      metadata = {
+        bucket: bucket,
+        key: key,
+      }.freeze
+
+      file = get_bucket(bucket).file(key)
+      obj_size = file.size
+
+      Enumerator.new do |yielder|
+        start = 0
+        while start < obj_size
+          stop = [start + chunk_size, obj_size].min
+
+          # We simulate an enumerator-based streaming approach by using partial range
+          # downloads as there's no direct support for streaming downloads. The returned
+          # object is a StringIO, so we must `.rewind` before we can access it.
+          obj_io = file.download(range: start...stop)
+          obj_io&.rewind
+
+          # rubocop:disable Style/ZeroLengthPredicate
+          # StringIO does not define the `.empty?` method that rubocop is so keen on using
+          body = obj_io&.read
+          start += body.size
+          break if body.nil? || body.size.zero?
+          # rubocop:enable Style/ZeroLengthPredicate
+
+          yielder.yield([metadata, body])
+        end
+      end
     end
 
     def list(bucket:, key:, page_size:)

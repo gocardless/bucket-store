@@ -12,6 +12,7 @@ services:
       MINIO_REGION_NAME: us-east-1
     ports:
       - "9000:9000"
+      - "9001:9001"
   gcp-simulator:
     image: fsouza/fake-gcs-server
     hostname: gcp
