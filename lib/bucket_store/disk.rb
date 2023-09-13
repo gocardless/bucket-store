@@ -19,8 +19,6 @@ module BucketStore
         output_file.rewind
       end
 
-      file.rewind
-
       {
         bucket: bucket,
         key: key,
@@ -30,7 +28,6 @@ module BucketStore
     def download(bucket:, key:, file:)
       File.open(key_path(bucket, key), "r") do |saved_file|
         file.write(saved_file.read)
-        saved_file.rewind
         file.rewind
       end
     end

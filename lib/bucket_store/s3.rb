@@ -27,8 +27,6 @@ module BucketStore
         body: file,
       )
 
-      file.rewind
-
       {
         bucket: bucket,
         key: key,

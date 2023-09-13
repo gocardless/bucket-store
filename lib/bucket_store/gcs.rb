@@ -36,8 +36,6 @@ module BucketStore
     def upload!(bucket:, key:, file:)
       get_bucket(bucket).create_file(file, key)
 
-      file.rewind
-
       {
         bucket: bucket,
         key: key,

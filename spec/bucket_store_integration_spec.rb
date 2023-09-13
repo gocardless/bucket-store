@@ -57,10 +57,12 @@ RSpec.describe BucketStore, :integration do
           described_class.for("#{base_bucket_uri}/#{temp_filename}").
             stream.
             upload!(file: input_temp_file)
+          input_temp_file.rewind
 
           described_class.for("#{base_bucket_uri}/#{buffer_filename}").
             stream.
             upload!(file: input_in_memory_buffer)
+          input_in_memory_buffer.rewind
         end
 
         after do
