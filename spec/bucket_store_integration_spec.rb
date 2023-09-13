@@ -6,8 +6,6 @@ require "aws-sdk-s3"
 
 require "tempfile"
 
-require "pry-byebug"
-
 RSpec.describe BucketStore, :integration do
   before do
     # Setup AWS connectivity to minio
@@ -68,17 +66,8 @@ RSpec.describe BucketStore, :integration do
         end
 
         after do
-          if input_temp_file.is_a?(File)
-            input_temp_file.close
-          else
-            input_temp_file.unlink
-          end
-
-          if output_temp_file.is_a?(File)
-            output_temp_file.close
-          else
-            output_temp_file.unlink
-          end
+          input_temp_file.close!
+          output_temp_file.close!
         end
 
         it "all file are listable on the store" do
@@ -108,13 +97,13 @@ RSpec.describe BucketStore, :integration do
 
         context "when the files are binary" do
           let(:input_temp_file) do
-            Tempfile.new.binmode.tap do |file|
+            Tempfile.new(binmode: true).tap do |file|
               file.write(Random.bytes(1024))
               file.rewind
             end
           end
           let(:output_temp_file) do
-            Tempfile.new.binmode
+            Tempfile.new(binmode: true)
           end
 
           let(:input_in_memory_buffer) do
