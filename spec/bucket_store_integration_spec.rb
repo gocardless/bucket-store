@@ -6,6 +6,8 @@ require "aws-sdk-s3"
 
 require "tempfile"
 
+require "pry-byebug"
+
 RSpec.describe BucketStore, :integration do
   before do
     # Setup AWS connectivity to minio
@@ -66,8 +68,17 @@ RSpec.describe BucketStore, :integration do
         end
 
         after do
-          input_temp_file.close
-          output_temp_file.close
+          if input_temp_file.is_a?(File)
+            input_temp_file.close
+          else
+            input_temp_file.unlink
+          end
+
+          if output_temp_file.is_a?(File)
+            output_temp_file.close
+          else
+            output_temp_file.unlink
+          end
         end
 
         it "all file are listable on the store" do
