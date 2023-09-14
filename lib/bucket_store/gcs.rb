@@ -33,9 +33,8 @@ module BucketStore
                  end
     end
 
-    def upload!(bucket:, key:, content:)
-      buffer = StringIO.new(content)
-      get_bucket(bucket).create_file(buffer, key)
+    def upload!(bucket:, key:, file:)
+      get_bucket(bucket).create_file(file, key)
 
       {
         bucket: bucket,
@@ -43,17 +42,14 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      file = get_bucket(bucket).file(key)
+    def download(bucket:, key:, file:)
+      file.tap do |f|
+        get_bucket(bucket).
+          file(key).
+          download(f)
 
-      buffer = StringIO.new
-      file.download(buffer)
-
-      {
-        bucket: bucket,
-        key: key,
-        content: buffer.string,
-      }
+        f.rewind
+      end
     end
 
     def list(bucket:, key:, page_size:)

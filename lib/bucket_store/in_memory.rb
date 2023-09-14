@@ -24,8 +24,10 @@ module BucketStore
       @buckets = Hash.new { |hash, key| hash[key] = {} }
     end
 
-    def upload!(bucket:, key:, content:)
-      @buckets[bucket][key] = content
+    def upload!(bucket:, key:, file:)
+      file.tap do |f|
+        @buckets[bucket][key] = f.read
+      end
 
       {
         bucket: bucket,
@@ -33,12 +35,11 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      {
-        bucket: bucket,
-        key: key,
-        content: @buckets[bucket].fetch(key),
-      }
+    def download(bucket:, key:, file:)
+      file.tap do |f|
+        f.write(@buckets[bucket].fetch(key))
+        f.rewind
+      end
     end
 
     def list(bucket:, key:, page_size:)

@@ -13,23 +13,22 @@ module BucketStore
       @base_dir = File.expand_path(base_dir)
     end
 
-    def upload!(bucket:, key:, content:)
-      File.open(key_path(bucket, key), "w") do |file|
-        file.write(content)
+    def upload!(bucket:, key:, file:)
+      File.open(key_path(bucket, key), "w") do |output_file|
+        output_file.write(file.read)
+        output_file.rewind
       end
+
       {
         bucket: bucket,
         key: key,
       }
     end
 
-    def download(bucket:, key:)
-      File.open(key_path(bucket, key), "r") do |file|
-        {
-          bucket: bucket,
-          key: key,
-          content: file.read,
-        }
+    def download(bucket:, key:, file:)
+      File.open(key_path(bucket, key), "r") do |saved_file|
+        file.write(saved_file.read)
+        file.rewind
       end
     end
 

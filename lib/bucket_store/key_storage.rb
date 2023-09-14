@@ -15,6 +15,90 @@ module BucketStore
       disk: Disk,
     }.freeze
 
+    # Defines a streaming interface for download and upload operations.
+    #
+    # Note that individual adapters may require additional configuration for the correct
+    # behavior of the streaming interface.
+    class KeyStreamer
+      attr_reader :bucket, :key, :adapter_type
+
+      def initialize(adapter:, adapter_type:, bucket:, key:)
+        @adapter = adapter
+        @adapter_type = adapter_type
+        @bucket = bucket
+        @key = key
+      end
+
+      # Streams the content of the reference key into a file-like object
+      # @param [IO] file a writeable IO instance, or a file-like object such as `StringIO`
+      # @return hash containing the bucket, the key and file like object passed in as input
+      #
+      # @see KeyStorage#download
+      # @example Download a key
+      #   buffer = StringIO.new
+      #   BucketStore.for("inmemory://bucket/file.xml").stream.download(file: buffer)
+      #   buffer.string == "Imagine I'm a 2GB file"
+      def download(file:)
+        BucketStore.logger.info(event: "key_storage.download_started")
+
+        start = BucketStore::Timing.monotonic_now
+        adapter.download(
+          bucket: bucket,
+          key: key,
+          file: file,
+        )
+
+        BucketStore.logger.info(event: "key_storage.download_finished",
+                                duration: BucketStore::Timing.monotonic_now - start)
+
+        {
+          bucket: bucket,
+          key: key,
+          file: file,
+        }
+      end
+
+      # Performs a streaming upload to the backing object store
+      # @param [IO] file a readable IO instance, or a file-like object such as `StringIO`
+      # @return the generated key for the new object
+      #
+      # @see KeyStorage#upload!
+      # @example Upload a key
+      #   buffer = StringIO.new("Imagine I'm a 2GB file")
+      #   BucketStore.for("inmemory://bucket/file.xml").stream.upload!(file: buffer)
+      def upload!(file:)
+        raise ArgumentError, "Key cannot be empty" if key.empty?
+
+        BucketStore.logger.info(event: "key_storage.upload_started",
+                                **log_context)
+
+        start = BucketStore::Timing.monotonic_now
+        adapter.upload!(
+          bucket: bucket,
+          key: key,
+          file: file,
+        )
+
+        BucketStore.logger.info(event: "key_storage.upload_finished",
+                                duration: BucketStore::Timing.monotonic_now - start,
+                                **log_context)
+
+        "#{adapter_type}://#{bucket}/#{key}"
+      end
+
+      private
+
+      attr_reader :adapter
+
+      def log_context
+        {
+          bucket: bucket,
+          key: key,
+          adapter_type: adapter_type,
+        }.compact
+      end
+    end
+
     attr_reader :bucket, :key, :adapter_type
 
     def initialize(adapter:, bucket:, key:)
@@ -40,45 +124,32 @@ module BucketStore
     # @example Download a key
     #   BucketStore.for("inmemory://bucket/file.xml").download
     def download
-      raise ArgumentError, "Key cannot be empty" if key.empty?
-
-      BucketStore.logger.info(event: "key_storage.download_started")
-
-      start = BucketStore::Timing.monotonic_now
-      result = adapter.download(bucket: bucket, key: key)
-
-      BucketStore.logger.info(event: "key_storage.download_finished",
-                              duration: BucketStore::Timing.monotonic_now - start)
-
-      result
+      buffer = StringIO.new
+      stream.download(file: buffer).tap do |result|
+        result.delete(:file)
+        result[:content] = buffer.string
+      end
     end
 
-    # Uploads the given content to the reference key location.
+    # Uploads the given file to the reference key location.
     #
     # If the `key` already exists, its content will be replaced by the one in input.
     #
-    # @param [String] content The content to upload
+    # @param [String] content Contents of the file
     # @return [String] The final `key` where the content has been uploaded
     # @example Upload a file
-    #   BucketStore.for("inmemory://bucket/file.xml").upload("hello world")
+    #   BucketStore.for("inmemory://bucket/file.xml").upload!("hello world")
     def upload!(content)
+      stream.upload!(file: StringIO.new(content))
+    end
+
+    # Returns an interface for streaming operations
+    #
+    # @return [KeyStreamer] An interface for streaming operations
+    def stream
       raise ArgumentError, "Key cannot be empty" if key.empty?
 
-      BucketStore.logger.info(event: "key_storage.upload_started",
-                              **log_context)
-
-      start = BucketStore::Timing.monotonic_now
-      result = adapter.upload!(
-        bucket: bucket,
-        key: key,
-        content: content,
-      )
-
-      BucketStore.logger.info(event: "key_storage.upload_finished",
-                              duration: BucketStore::Timing.monotonic_now - start,
-                              **log_context)
-
-      "#{adapter_type}://#{result[:bucket]}/#{result[:key]}"
+      KeyStreamer.new(adapter: adapter, adapter_type: adapter_type, bucket: bucket, key: key)
     end
 
     # Lists all keys for the current adapter that have the reference key as prefix
@@ -159,13 +230,5 @@ module BucketStore
     private
 
     attr_reader :adapter
-
-    def log_context
-      {
-        bucket: bucket,
-        key: key,
-        adapter_type: adapter_type,
-      }.compact
-    end
   end
 end
