@@ -182,4 +182,27 @@ RSpec.describe BucketStore, :integration do
   include_examples "adapter integration", "disk://bucket"
   include_examples "adapter integration", "s3://bucket"
   include_examples "adapter integration", "gs://bucket"
+
+  context "inmemory storage" do
+    let(:bucket_store) { described_class.for("#{base_bucket_uri}/#{temp_filename}") }
+    let(:base_bucket_uri) { "inmemory://bucket" }
+    let(:temp_filename) { "temp-file" }
+
+    shared_examples "encoding persistance" do |encoding|
+      it "persists encoding between upload/download for #{encoding}", :aggregate_failures do
+        upload_data = String.new("some string", encoding: encoding)
+        bucket_store.upload!(upload_data)
+        download = bucket_store.download
+        download_data = download.fetch(:content)
+
+        expect(upload_data.encoding).to eq(encoding)
+        expect(download_data.encoding).to eq(encoding)
+        expect(upload_data).to eq(download_data)
+        expect(upload_data.object_id).to_not eq(download_data.object_id)
+      end
+    end
+
+    include_examples "encoding persistance", Encoding::UTF_8
+    include_examples "encoding persistance", Encoding::ISO_8859_1
+  end
 end
