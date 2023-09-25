@@ -1,3 +1,8 @@
+v0.6.1
+------
+- Support for legacy in-memory storage behavior
+   * In memory storage - persists encoding for upload / download
+
 v0.6.0
 ------
 - [BREAKING] Remove support for Ruby 2.6

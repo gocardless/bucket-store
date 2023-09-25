@@ -26,7 +26,10 @@ module BucketStore
 
     def upload!(bucket:, key:, file:)
       file.tap do |f|
-        @buckets[bucket][key] = f.read
+        @buckets[bucket][key] = {
+          data: f.read,
+          encoding: file.external_encoding,
+        }
       end
 
       {
@@ -37,7 +40,10 @@ module BucketStore
 
     def download(bucket:, key:, file:)
       file.tap do |f|
-        f.write(@buckets[bucket].fetch(key))
+        f.set_encoding(
+          @buckets[bucket].fetch(key).fetch(:encoding),
+        )
+        f.write(@buckets[bucket].fetch(key).fetch(:data))
         f.rewind
       end
     end
