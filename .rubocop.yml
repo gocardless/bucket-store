@@ -33,6 +33,9 @@ RSpec/MultipleExpectations:
 RSpec/Rails/AvoidSetupHook:
   Enabled: true
 
+RSpec/ExampleWording:
+  Enabled: false
+
 # Disabled as it's breaking dependabot 
 Gemspec/RequiredRubyVersion:
   Exclude:
