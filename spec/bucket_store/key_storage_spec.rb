@@ -120,7 +120,7 @@ RSpec.describe BucketStore::KeyStorage do
   describe "#stream" do
     let(:stream) { build_for("inmemory://bucket/file1").stream }
 
-    it "will return an object" do
+    it "returns an object" do
       expect { stream }.to_not raise_error
       expect(stream).to_not be_nil
     end
@@ -174,7 +174,7 @@ RSpec.describe BucketStore::KeyStorage do
     end
 
     describe "#upload!" do
-      it "will upload from a file" do
+      it "uploads from a file" do
         expect(stream.upload!(file: StringIO.new("hello"))).
           to eq("inmemory://bucket/file1")
       end
