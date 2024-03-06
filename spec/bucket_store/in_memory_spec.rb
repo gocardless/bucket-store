@@ -9,28 +9,29 @@ RSpec.describe BucketStore::InMemory do
 
   let(:bucket) { "bucket" }
 
+  let(:original_content) { "world" }
+  let(:file) { StringIO.new(original_content) }
+  let(:output_file) { StringIO.new }
+  let(:downloaded_content) { output_file.string }
+
   describe "#upload!" do
     it "uploads the given content" do
-      instance.upload!(bucket: bucket, key: "hello", content: "world")
+      instance.upload!(bucket: bucket, key: "hello", file: file)
 
-      expect(instance.download(bucket: bucket, key: "hello")).to eq(
-        bucket: bucket,
-        key: "hello",
-        content: "world",
-      )
+      instance.download(bucket: bucket, key: "hello", file: output_file)
+
+      expect(downloaded_content).to eq("world")
     end
 
     context "when uploading over a key that already exists" do
-      before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+      before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
       it "overrides the content" do
-        instance.upload!(bucket: bucket, key: "hello", content: "planet")
+        instance.upload!(bucket: bucket, key: "hello", file: StringIO.new("planet"))
 
-        expect(instance.download(bucket: bucket, key: "hello")).to eq(
-          bucket: bucket,
-          key: "hello",
-          content: "planet",
-        )
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+
+        expect(downloaded_content).to eq("planet")
       end
     end
   end
@@ -38,20 +39,17 @@ RSpec.describe BucketStore::InMemory do
   describe "#download" do
     context "when the key does not exist" do
       it "raises an error" do
-        expect { instance.download(bucket: bucket, key: "unknown") }.
+        expect { instance.download(bucket: bucket, key: "unknown", file: output_file) }.
           to raise_error(KeyError, /key not found/)
       end
     end
 
     context "when the key has been uploaded" do
-      before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+      before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
       it "returns the uploaded content" do
-        expect(instance.download(bucket: bucket, key: "hello")).to eq(
-          bucket: bucket,
-          key: "hello",
-          content: "world",
-        )
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+        expect(downloaded_content).to eq("world")
       end
 
       context "but we try to fetch it from a different bucket" do
@@ -71,11 +69,11 @@ RSpec.describe BucketStore::InMemory do
 
     context "when the bucket has some keys in it" do
       before do
-        instance.upload!(bucket: bucket, key: "2019-01/hello1", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello2", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello3", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-02/hello", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-03/hello", content: "world")
+        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: file)
+        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: file)
+        instance.upload!(bucket: bucket, key: "2019-02/hello", file: file)
+        instance.upload!(bucket: bucket, key: "2019-03/hello", file: file)
       end
 
       context "and we provide a matching prefix" do
@@ -124,37 +122,39 @@ RSpec.describe BucketStore::InMemory do
 
     context "when there's some content" do
       before do
-        instance.upload!(bucket: bucket, key: "2019-01/hello1", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello2", content: "world")
-        instance.upload!(bucket: bucket, key: "2019-01/hello3", content: "world")
-        instance.upload!(bucket: bucket2, key: "2019-02/hello", content: "world")
-        instance.upload!(bucket: bucket2, key: "2019-03/hello", content: "world")
+        instance.upload!(bucket: bucket, key: "2019-01/hello1", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello2", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket, key: "2019-01/hello3", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket2, key: "2019-02/hello", file: StringIO.new("world"))
+        instance.upload!(bucket: bucket2, key: "2019-03/hello", file: StringIO.new("world"))
       end
 
       it "resets all the buckets" do
         instance.reset!
 
-        expect { instance.download(bucket: bucket, key: "2019-01/hello1") }.
+        expect { instance.download(bucket: bucket, key: "2019-01/hello1", file: output_file) }.
           to raise_error(KeyError, /key not found/)
-        expect { instance.download(bucket: bucket, key: "2019-01/hello2") }.
+        expect { instance.download(bucket: bucket, key: "2019-01/hello2", file: output_file) }.
           to raise_error(KeyError, /key not found/)
-        expect { instance.download(bucket: bucket, key: "2019-01/hello3") }.
+        expect { instance.download(bucket: bucket, key: "2019-01/hello3", file: output_file) }.
           to raise_error(KeyError, /key not found/)
-        expect { instance.download(bucket: bucket2, key: "2019-02/hello") }.
+        expect { instance.download(bucket: bucket2, key: "2019-02/hello", file: output_file) }.
           to raise_error(KeyError, /key not found/)
-        expect { instance.download(bucket: bucket2, key: "2019-03/hello") }.
+        expect { instance.download(bucket: bucket2, key: "2019-03/hello", file: output_file) }.
           to raise_error(KeyError, /key not found/)
       end
     end
   end
 
   describe "#delete!" do
-    before { instance.upload!(bucket: bucket, key: "hello", content: "world") }
+    before { instance.upload!(bucket: bucket, key: "hello", file: file) }
 
     it "deletes the given content" do
       expect(instance.delete!(bucket: bucket, key: "hello")).to eq(true)
 
-      expect { instance.download(bucket: bucket, key: "hello").download }.to raise_error(KeyError)
+      expect do
+        instance.download(bucket: bucket, key: "hello", file: output_file)
+      end.to raise_error(KeyError)
     end
   end
 end

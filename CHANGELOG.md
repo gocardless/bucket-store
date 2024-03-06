@@ -1,3 +1,8 @@
+v0.6.0
+------
+- [BREAKING] Remove support for Ruby 2.6
+- Add support for streaming uploads / downloads
+
 v0.5.0
 ------
 - Support escaping of URI keys. Fixes #46.

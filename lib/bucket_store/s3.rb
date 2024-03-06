@@ -20,11 +20,11 @@ module BucketStore
       )
     end
 
-    def upload!(bucket:, key:, content:)
+    def upload!(bucket:, key:, file:)
       storage.put_object(
         bucket: bucket,
         key: key,
-        body: content,
+        body: file,
       )
 
       {
@@ -33,17 +33,12 @@ module BucketStore
       }
     end
 
-    def download(bucket:, key:)
-      file = storage.get_object(
+    def download(bucket:, key:, file:)
+      storage.get_object(
+        response_target: file,
         bucket: bucket,
         key: key,
       )
-
-      {
-        bucket: bucket,
-        key: key,
-        content: file.body.read,
-      }
     end
 
     def list(bucket:, key:, page_size:)
