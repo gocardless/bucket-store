@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "logger"
 require "bucket_store"
 
 RSpec.configure do |config|

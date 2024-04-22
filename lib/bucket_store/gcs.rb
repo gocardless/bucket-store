@@ -3,17 +3,21 @@
 require "stringio"
 require "uri"
 
-require "google/cloud/storage"
-
 module BucketStore
   class Gcs
     DEFAULT_TIMEOUT_SECONDS = 30
 
+    def self.load_client_library
+      @load_client_library ||= require "google/cloud/storage"
+    end
+
     def self.build(timeout_seconds = DEFAULT_TIMEOUT_SECONDS)
-      Gcs.new(timeout_seconds)
+      new(timeout_seconds)
     end
 
     def initialize(timeout_seconds)
+      self.class.load_client_library
+
       # Ruby's GCS library does not natively support setting up a simulator, but it allows
       # for a specific endpoint to be passed down which has the same effect. The simulator
       # needs to be special cased as in that case we want to bypass authentication,
