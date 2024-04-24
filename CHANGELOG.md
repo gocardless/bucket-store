@@ -1,3 +1,7 @@
+v0.7.0
+------
+- Lazily load AWS/GCS SDK's
+
 v0.6.0
 ------
 - [BREAKING] Remove support for Ruby 2.6
