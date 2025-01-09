@@ -30,9 +30,6 @@ RSpec/LetSetup:
 RSpec/MultipleExpectations:
   Max: 10
 
-RSpec/Rails/AvoidSetupHook:
-  Enabled: true
-
 RSpec/ExampleWording:
   Enabled: false
 
