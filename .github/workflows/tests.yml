@@ -38,9 +38,9 @@ jobs:
     env:
       STORAGE_EMULATOR_HOST: "http://localhost:9023/"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Start minio and GCS simulator
-        run: docker-compose up -d
+        run: docker compose up -d
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
