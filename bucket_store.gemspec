@@ -21,10 +21,5 @@ Gem::Specification.new do |s|
   s.add_dependency "aws-sdk-s3", ">= 1.147"
   s.add_dependency "google-cloud-storage", ">= 1.50"
 
-  s.add_development_dependency "gc_ruboconfig", "~> 5.0.2"
-  s.add_development_dependency "pry-byebug", "~> 3.10"
-  s.add_development_dependency "rspec", "~> 3.13"
-  s.add_development_dependency "rspec-github", "~> 2.4.0"
-  s.add_development_dependency "rubocop", ">= 1.63"
   s.metadata["rubygems_mfa_required"] = "true"
 end
