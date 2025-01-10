@@ -10,7 +10,7 @@ is supported.
 To that end, [our build matrix](../.circleci/config.yml) includes all these versions.
 
 Any time BucketStore doesn't work on a supported version of Ruby, it's a bug, and can be
-reported [here](https://github.com/gocardless/file-storage/issues).
+reported [here](https://github.com/gocardless/bucket-store/issues).
 
 # Deprecation
 

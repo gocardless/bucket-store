@@ -6,6 +6,7 @@ inherit_gem:
 AllCops:
   TargetRubyVersion: 2.6
   DisplayCopNames: true
+  NewCops: enable
 
 Layout/LineLength:
   Max: 100
@@ -29,9 +30,6 @@ RSpec/LetSetup:
 
 RSpec/MultipleExpectations:
   Max: 10
-
-RSpec/Rails/AvoidSetupHook:
-  Enabled: true
 
 RSpec/ExampleWording:
   Enabled: false
