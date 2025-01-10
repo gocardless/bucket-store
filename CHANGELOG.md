@@ -1,3 +1,7 @@
+v0.8.0
+------
+- Drop support for Ruby 2.7 and 3.0
+
 v0.7.0
 ------
 - Lazily load AWS/GCS SDK's
