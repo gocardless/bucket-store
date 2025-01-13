@@ -18,8 +18,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 3.1"
 
-  s.add_dependency "aws-sdk-s3", ">= 1.147"
-  s.add_dependency "google-cloud-storage", ">= 1.50"
+  s.add_dependency "aws-sdk-s3", ">= 1.177"
+  s.add_dependency "google-cloud-storage", ">= 1.54"
 
   s.metadata["rubygems_mfa_required"] = "true"
 end
