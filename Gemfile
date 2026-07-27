@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "gc_ruboconfig", "~> 5.0.2"
+gem "gc_ruboconfig", "~> 6.0.0"
 gem "nokogiri", "~> 1.18.5"
 gem "pry-byebug", "~> 3.10"
 gem "rspec", "~> 3.13"
